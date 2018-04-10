@@ -5,6 +5,7 @@ import CloudDetect
 import Physics
 import Plots
 import InOut
+import Classify
 import numpy as np
 from netCDF4 import Dataset, num2date
 from datetime import datetime, timedelta
@@ -58,6 +59,7 @@ def invert(station_block, cfgfile):
   PlotBeta   = config.getboolean("Output", "PlotBeta")
   PlotDep    = config.getboolean("Output", "PlotDep")
   PlotAlpha  = config.getboolean("Output", "PlotAlpha")
+  AshOut     = config.getboolean("Output", "AshOut")
   NCDout     = config.getboolean("Output", "NCDout")
   NCDmonth   = config.getboolean("Output", "NCDmonth")
 
@@ -317,6 +319,22 @@ def invert(station_block, cfgfile):
       ldep[absc532<1E-7]=np.nan
     Plots.show_dep(x,ldep,lz,ncpath_out+'dep.png',zmax=18)
     
+  if AshOut:
+    print "Ash detection..."
+    if os.path.isfile(ncpath_raw+"disc.pickle"):
+      NZ1                = iz_18km+1
+      absc532_sub        = 1000.0*(absc532[:NZ1,:]).T
+      absc1064_sub       = 1000.0*(absc1064[:NZ1,:]).T
+      lz_sub             = lz[:NZ1]
+      mask_tomoaki       = Classify.classify_tomoaki(absc1064_sub, lz_sub, NX, NZ1, height)
+      ash_mask, ash_conc = Classify.get_ash_concentration(NX, NZ1, absc1064_sub, absc532_sub, mask_tomoaki, ncpath_raw+"disc.pickle")
+      print "Plotting ash concentration..."
+      Plots.show_ash(x,ash_conc,lz_sub,ncpath_out+'ash.png')
+      print "Plotting classes..."
+      Plots.show_mask(x,mask_tomoaki,lz_sub,ncpath_out+'classes.png')
+    else:
+      print "Unable to open file: ", ncpath_raw+"disc.pickle"
+
   if NCDout:
     print "Creating NetCDF file: {}".format(ncpath_out+ncfile_out)
     NZ1 = iz_18km+1

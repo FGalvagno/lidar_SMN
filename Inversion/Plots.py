@@ -186,6 +186,42 @@ def show_cal(x,data,z,zb,zt,filename,zmax=0.0):
   plt.xlabel('')
   plt.ylabel('Height AGL [km]')
   fig.savefig(filename, bbox_inches='tight', dpi=150)
+
+def show_ash(x,data,z,filename):
+  fig, ax = get_figure(True)
+
+  CS    = ax.pcolormesh(x, z, data.T, cmap=my_cmap)
+  cbar  = plt.colorbar(CS)
+  cbar.set_label(r"Ash concentration ($mg\,m^{3}$)")
+
+  plt.xlabel('')
+  plt.ylabel('Height AGL [km]')
+  fig.savefig(filename, bbox_inches='tight', dpi=150)
+
+def show_mask(x,data,z,filename):
+  fig, ax = get_figure(True)
+
+  cmap_disc = plt.get_cmap('gist_ncar', 11)
+
+  CS    = ax.pcolormesh(x, z, data.T, cmap=cmap_disc, vmin=-1.5, vmax=9.5)
+  cbar  = plt.colorbar(CS, ticks=np.arange(-1,10))
+  cbar.set_label(r"Classes")
+  cbar.ax.set_yticklabels(['Undefined', 
+                           'No Data', 
+                           'Noisy', 
+                           'Molecule', 
+                           'Clean', 
+                           'Aerosol', 
+                           'Unknown', 
+                           'Rain-Fog', 
+                           'Cloud', 
+                           'Saturated',
+                           'Unknown2'])
+
+
+  plt.xlabel('')
+  plt.ylabel('Height AGL [km]')
+  fig.savefig(filename, bbox_inches='tight', dpi=150)
   
 def histo(hist, bin_edges):
   fig = plt.figure()
