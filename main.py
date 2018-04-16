@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 import os.path
 import sys
@@ -8,12 +8,15 @@ from datetime  import datetime, timedelta, time
 from ConfigParser import SafeConfigParser
 
 ################# Parameters ###############################################
-cfgpath       = "/home/lmingari/lidar_v2.1/"                               # Absolute Path with cfg file
+#cfgpath       = "/home/leonardo/Desktop/lidar_SMN/"                        # Absolute Path with cfg file
 cfgfile       = "parameters.cfg"                                           # CFG file
 t2            = datetime.utcnow().replace(second=0, microsecond=0)         # Final date and time
 t1            = (t2-timedelta(days=22)).replace(hour=0, minute=0)          # Start date and time 
 Debug         = True
 ############################################################################
+
+cfgpath       = os.path.dirname(os.path.abspath(__file__))
+cfgpath       = os.path.join(cfgpath, cfgfile)
 
 station_list  = ['aeroparque',
                  'bariloche',
@@ -23,7 +26,7 @@ station_list  = ['aeroparque',
                  'neuquen',
                  'parenas',
                  'tucuman',
-		 'vmartelli']
+                 'vmartelli']
 
 station_block = sys.argv[1]
 
@@ -36,7 +39,7 @@ else:
   exit()
 
 config = SafeConfigParser()
-config.read(cfgpath+cfgfile)
+config.read(cfgpath)
 
 #Read parameters from an external file
 block      = station_block
@@ -61,7 +64,7 @@ if t2_data>t1_data:
   else:
     print "Creating a new file: ", prefix+ncfile_raw
     ReadRaw.createncd(x, y1, y2, y3, z, height, ncpath_raw+prefix+ncfile_raw)
-  Invert532.invert(block,cfgpath+cfgfile)
+  Invert532.invert(block,cfgpath)
 else:
   print "Nothing to do"
   print "Waiting for new data"
