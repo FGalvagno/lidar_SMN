@@ -1,4 +1,9 @@
-lidar-v2.1
+lidar-v2.2
+
+**********
+Updates:
+16 abr 2018: File checking improved in ReadRaw module
+**********
 
 Lidar Products for Elastic Scattering - SAVERNet Project
 
