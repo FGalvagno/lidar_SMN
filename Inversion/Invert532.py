@@ -163,7 +163,8 @@ def invert(station_block, cfgfile):
     lvis = np.full((NZ,NX),np.nan)
     lir  = np.full((NZ,NX),np.nan)
     ldep = np.full((NZ,NX),np.nan)
-    lz   = np.mean(z.reshape(-1, wz), axis=1)
+#    lz   = np.mean(z.reshape(-1, wz), axis=1)
+    lz = np.copy(z[wz-1::wz])
     DZ = lz[1]-lz[0]
     DZinv = 1.0/DZ
     with warnings.catch_warnings():
