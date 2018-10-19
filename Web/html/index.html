@@ -75,125 +75,72 @@
 
     <div id="map"></div>
     <script>
+
       function initMap() {
-    var locations = [
-      ['Punta Arenas', -53.16383, -70.91707, 17, 'parenas_b.html'],
-      ['Rio Gallegos', -51.62305, -69.21683, 16, 'gallegos_b.html'],
-      ['Tucuman', -26.80828, -65.21759, 15, 'tucuman_b.html'],
-      ['Bariloche', -41.13347, -71.31028, 14, 'bariloche_b.html'],
-      ['Comodoro Rivadavia', -45.86561, -67.48224, 13, 'comodoro_b.html'],
-      ['Buenos Aires', -34.603722, -58.381592, 12, 'aeroparque_b.html'],
-      ['Cordoba', -31.413500, -64.181050, 11, 'cordoba_b.html'],
-      ['Neuquen', -38.94587, -68.07309, 10, 'neuquen_b.html'],
-    ];
 
         var map = new google.maps.Map(document.getElementById('map'), {
-          mapTypeId: 'hybrid',
           zoom: 4,
           center: {lat: -40, lng: -65}
         });
 
-        for (var i = 0; i < locations.length; i++) 
-        {
-          var place = locations[i];
-          var marker = new google.maps.Marker({
-            position: {lat: place[1], lng: place[2]},
-            map: map,
-            title: place[0],
-            zIndex: place[3],
-            url:  place[4]
+        var labels = [
+          "Punta Arenas",
+          "Rio Gallegos",
+          "Tucuman",
+          "Bariloche",
+          "Comodoro Rivadavia",
+          "Buenos Aires - Aeroparque",
+          "Cordoba",
+          "Neuquen",
+          "Buenos Aires - CITEDEF",
+        ]
+
+        var urls = [
+          "parenas_b.html",
+          "gallegos_b.html",
+          "tucuman_b.html",
+          "bariloche_b.html",
+          "comodoro_b.html",
+          "aeroparque_b.html",
+          "cordoba_b.html",
+          "neuquen_b.html",
+          "vmartelli_b.html",
+        ]
+
+        var markers = locations.map(function(location, i) {
+          return new google.maps.Marker({
+            position: location,
+            title: labels[i], 
+            url: urls[i]
           });
-
-        google.maps.event.addListener(marker, 'click', function() {
-            window.location.href = this.url;
         });
-      }
-      }
-    </script> <br>
 
-    <h4 class="w3-text-black w3-left">
-      <i class="fa fa-map-marker"></i>
-      Acceso a los datos de cada estación:
-    </h4><br>
-    <h5 class="w3-text-red w3-right">
-      <i class="fa fa-exclamation-triangle"></i>
-      Pase el cursor sobre la foto para ver el nombre de la estación y 
-      haga click para acceder a los datos lidar
-    </h5>
-    <!-- Grid for stations -->
-    <div class="w3-row-padding" style="margin:0 -16px">
-      <div class="w3-half">
-        <a href="parenas_b.html">
-          <div class="container">
-            <img src="images/parenas.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Punta Arenas</div>
-            </div>
-          </div>
-        </a>
-        <a href="aeroparque_b.html">
-          <div class="container">
-            <img src="images/baires.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Buenos Aires (Aeroparque)</div>
-            </div>
-          </div>
-        </a>
-        <a href="gallegos_b.html">
-          <div class="container">
-            <img src="images/gallegos.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Río Gallegos</div>
-            </div>
-          </div>
-        </a>
-        <a href="neuquen_b.html">
-          <div class="container">
-            <img src="images/neuquen.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Neuquén</div>
-            </div>
-          </div>
-        </a>
-      </div>
+        for (var i = 0; i < markers.length; i++) 
+        {
+          google.maps.event.addListener(markers[i], 'click', function() {
+              window.location.href = this.url;
+            });
+        }
 
-      <div class="w3-half">
-        <a href="comodoro_b.html">
-          <div class="container">
-            <img src="images/comodoro.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Comodoro Rivadavia</div>
-            </div>
-          </div>
-        </a>
-        <a href="bariloche_b.html">
-          <div class="container">
-            <img src="images/bariloche.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Bariloche</div>
-            </div>
-          </div>
-        </a>
-        <a href="tucuman_b.html">
-          <div class="container">
-            <img src="images/tucuman.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Tucumán</div>
-            </div>
-          </div>
-        </a>
-        <a href="cordoba_b.html">
-          <div class="container">
-            <img src="images/cordoba.jpg" class="image">
-            <div class="overlay">
-              <div class="text">Córdoba</div>
-            </div>
-          </div>
-        </a>
-      </div>
-    <!-- End grid -->
-    </div>
-  <!-- End Stations Section -->
+        var markerCluster = new MarkerClusterer(map, markers, {
+          imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+        });
+
+      }
+      var locations = [
+        {lat: -53.136487, lng: -70.879736},
+        {lat: -51.62305,  lng: -69.21683},
+        {lat: -26.78712,  lng: -65.206758},
+        {lat: -41.147347, lng: -71.163994},
+        {lat: -45.792187, lng: -67.462858},
+        {lat: -34.56412,  lng: -58.417126},
+        {lat: -31.675517, lng: -63.872964},
+        {lat: -38.95209,  lng: -68.136819},
+        {lat: -34.555824, lng: -58.506090}
+      ]
+    </script>
+
+
   </div>
 
   <!-- About Section -->
@@ -294,6 +241,10 @@
 
 <!-- END PAGE CONTENT -->
 </div>
+
+<script 
+  src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
 
 <script async defer
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWw7SACPs0ii_5tXJT8WTxJaY3_qJ0IaE&callback=initMap">
