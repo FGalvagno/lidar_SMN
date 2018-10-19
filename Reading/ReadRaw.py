@@ -8,10 +8,11 @@ import os
 from os.path import isfile, join
 
 ################# Parameters ###############################################
-dt       = timedelta(minutes=1)                                            # Delta time (1 min). NO CHANGE
-#FileSize = 82492                                                           # Filesize in bytes
-fmt      = "%y%m%d%H.%M%S"                                                 # Format file
-Debug    = True
+dt           = timedelta(minutes=1)                                        # Delta time (1 min). NO CHANGE
+#FileSize = 82492                                                          # Filesize in bytes
+fmt          = "%y%m%d%H.%M%S"                                             # Format file
+channel_list = ["532oo","532po","1064oo"]
+Debug        = True
 ############################################################################
 
 def read_firstline(fname):
@@ -103,45 +104,25 @@ def get_data(t1,t2,sampling,path,prefix,FileSize):
     if os.path.exists(path + folder):
       filelist_folder = valid_files(prefix,td,path,FileSize)
       if filelist_folder:
-        print "Reading folder: ", folder
+        if Debug: print "Reading folder: ", folder
         for file_item in filelist_folder:
           file_date = parse_datetime(file_item)
           i_time    = int((file_date-t1).total_seconds()//(60.0*sampling))
           if 0<=i_time<NT:
             n_data[i_time] = n_data[i_time] + 1
             # Get Licel data
-            x = LoadLicel(path + folder + file_item)
+            x = LoadLicel(path + folder + file_item, channel_list)
             if not FileFound:
-              height = x.globalparameters.HeightASL
-              z      = x.channel[0].Range * 0.001      # Height in kilometers
+              FileFound = True
+              height = x.GlobalP.HeightASL
+              z      = x.channel["532oo"].Range * 0.001      # Height in kilometers
               NZ     = len(z)
               y1     = np.zeros((NT,NZ))
               y2     = np.zeros((NT,NZ))
               y3     = np.zeros((NT,NZ))
-            for ichannel in range(x.globalparameters.Channels):
-              if not x.channel[ichannel].isPhotonCounting:
-                if x.channel[ichannel].Wavelength == 532 and not x.channel[ichannel].isPolarized:
-                  y1[i_time,:] = y1[i_time,:] + x.channel[ichannel].Signal
-                  if Debug and not FileFound:
-                    print "************ ch1 ************"
-                    print "Using channel: {} nm".format(x.channel[ichannel].Wavelength)    # Show data information
-                    for key, item in x.globalparameters.__dict__.items():
-                        print key + ": ", item
-                elif x.channel[ichannel].Wavelength == 532 and x.channel[ichannel].isPolarized:
-                  y2[i_time,:] = y2[i_time,:] + x.channel[ichannel].Signal
-                  if Debug and not FileFound:
-                    print "************ ch2 ************"
-                    print "Using channel: {} nm".format(x.channel[ichannel].Wavelength)    # Show data information
-                    for key, item in x.globalparameters.__dict__.items():
-                        print key + ": ", item
-                elif x.channel[ichannel].Wavelength == 1064 and not x.channel[ichannel].isPolarized:
-                  y3[i_time,:] = y3[i_time,:] + x.channel[ichannel].Signal
-                  if Debug and not FileFound:
-                    print "************ ch3 ************"
-                    print "Using channel: {} nm".format(x.channel[ichannel].Wavelength)    # Show data information
-                    for key, item in x.globalparameters.__dict__.items():
-                        print key + ": ", item
-            if not FileFound: FileFound = True
+            y1[i_time,:] += x.channel["532oo"].Signal
+            y2[i_time,:] += x.channel["532po"].Signal
+            y3[i_time,:] += x.channel["1064oo"].Signal
     td += timedelta(days=1)
   for it in range(NT):
     if n_data[it]==0:

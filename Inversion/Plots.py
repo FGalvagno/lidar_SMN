@@ -47,7 +47,7 @@ def build_palette4(l1,l2,l3,l4):
   cmap.set_over(  rgb[-1] )
   return cmap,norm
 
-def resampling(x, data, z, ztop):
+def resampling(x, data, z, maxalt, maxdays):
   NX = len(x)
   NZ = len(z)
   
@@ -55,12 +55,16 @@ def resampling(x, data, z, ztop):
   units = day_0.strftime("minutes since %Y-%m-%d 00:00:00")
   xm    = date2num(x,units=units)
 
-  DX = xm[1]-xm[0]
-  DZ = z[1]-z[0]
+  DX    = xm[1]-xm[0]
+  DZ    = z[1]-z[0]
   DZinv = 1.0/DZ
-  if ztop>0:
-    NZ0 = int(round(ztop * DZinv))
+  if maxalt>0:
+    NZ0 = int(round(maxalt * DZinv))
     if NZ0<NZ: NZ=NZ0
+  if maxdays>0:
+    profiles_per_day = 1440/DX
+    NX0 = int(round(maxdays*profiles_per_day))
+    if NX0<NX: NX=NX0
   
   N  = NX*NZ
   if Debug: print "Original data: {} points".format(N)
@@ -110,26 +114,27 @@ def resampling(x, data, z, ztop):
   return x_wx, data_wzwx, z_wz
 
 def get_figure(automatic):
-  fig = plt.figure(figsize=(15,6))
+  fig = plt.figure(figsize=(16,6))
   ax  = fig.add_subplot(axisartist.Subplot(fig, "111"))
   
   if not automatic:
     ax.xaxis.set_major_locator( DayLocator() )
-    ax.xaxis.set_minor_locator( HourLocator([12]) )
+#    ax.xaxis.set_minor_locator( DayLocator(range(2,32,2)) )
   ax.xaxis.set_major_formatter( DateFormatter('%d\n%b') )
   ax.xaxis.set_minor_formatter( DateFormatter('%d') )
   ax.autoscale_view()
   ax.axis["bottom"].major_ticklabels.set_va('top')
   ax.axis["bottom"].toggle(ticklabels=True)
-  
+  ax.axis["top"].toggle(all=False) 
+ 
   ax.axis[:].major_ticks.set_tick_out(True)
   
   ax.fmt_xdata = DateFormatter('%Y-%m-%d %H:%M')
   fig.autofmt_xdate()
   return fig, ax
   
-def show_raw(x,data,z,filename,zmax=0.0):
-  x_low, data_low, z_low = resampling(x,data,z,zmax)
+def show_raw(x,data,z,filename,maxalt=0.0,maxdays=0.0):
+  x_low, data_low, z_low = resampling(x,data,z,maxalt,maxdays)
   fig, ax = get_figure(True)
 
   CS    = ax.pcolormesh(x_low,z_low,data_low, cmap=my_cmap, vmin=0, vmax=20)
@@ -140,8 +145,8 @@ def show_raw(x,data,z,filename,zmax=0.0):
   plt.ylabel('Height AGL [km]')
   fig.savefig(filename, bbox_inches='tight', dpi=150)
   
-def show_beta(x,data,z,filename,zmax=0.0):
-  x_low, data_low, z_low = resampling(x,data,z,zmax)
+def show_beta(x,data,z,fname="attbsc.png",label="Attenuated Backscatter coefficient",maxalt=0.0,maxdays=0.0):
+  x_low, data_low, z_low = resampling(x,data,z,maxalt,maxdays)
   data_low = np.ma.masked_invalid(data_low)
 
   levs1 = [i*1E-4 for i in [1,2,4,6,8,10] ]
@@ -150,7 +155,8 @@ def show_beta(x,data,z,filename,zmax=0.0):
   levs4 = [i*1E-3 for i in [7,8,9,10,20,40,60,80,100] ]
   my_cmap,my_norm = build_palette4(levs1,levs2,levs3,levs4)
 
-  fig, ax   = get_figure(True)
+  auto_tick = maxdays>12
+  fig, ax   = get_figure(auto_tick)
   CS        = ax.pcolormesh(x_low, z_low, data_low,
                             cmap = my_cmap,
                             norm = my_norm,
@@ -160,17 +166,19 @@ def show_beta(x,data,z,filename,zmax=0.0):
                            ticks=my_ticks, 
                            extend='both',
                            format=LogFormatterMathtext(),
-#                           orientation='horizontal'
+                           orientation='horizontal',
+                           aspect=30,
+                           shrink=0.6, 
                            )
-  cbar.set_label(r"Attenuated Backscatter coefficient $[/sr \, /km]$")
-  ax.patch.set(hatch='x', edgecolor='black')
+  ax.set_title(label + r" $[/sr \, /km]$")
+  ax.patch.set(hatch='/', edgecolor='black')
 
   plt.xlabel('')
   plt.ylabel('Height AGL [km]')
-  fig.savefig(filename, bbox_inches='tight', dpi=150)
+  fig.savefig(fname, bbox_inches='tight', dpi=150)
   
-def show_alpha(x,data,z,zb,zt,zc,filename,zmax=0.0):
-  x_low, data_low, z_low = resampling(x,data,z,zmax)
+def show_alpha(x,data,z,zb,zt,zc,filename,maxalt=0.0,maxdays=0.0):
+  x_low, data_low, z_low = resampling(x,data,z,maxalt,maxdays)
   fig, ax = get_figure(True)
 
   masked = np.ma.array (data_low, mask=np.isnan(data_low))
@@ -182,17 +190,17 @@ def show_alpha(x,data,z,zb,zt,zc,filename,zmax=0.0):
   
   with np.errstate(invalid='ignore'):
     NX = len(x)
-    zz = [min(zt[i],zmax) for i in range(NX)]
-    ax.fill_between(x, zb, zz, where=zb<zmax, color='black', alpha=0.8)
-    ax.fill_between(x, zc, zmax, where=zc<zmax, color='green', alpha=0.1)
+    zz = [min(zt[i],maxalt) for i in range(NX)]
+    ax.fill_between(x, zb, zz,     where=zb<maxalt, color='black', alpha=0.8)
+    ax.fill_between(x, zc, maxalt, where=zc<maxalt, color='green', alpha=0.1)
 #    ax.fill_between(x,  0, zmax, where=np.all(np.isnan(data), axis=0),color='green', alpha=0.1)
 
   plt.xlabel('')
   plt.ylabel('Height AGL [km]')
   fig.savefig(filename, bbox_inches='tight', dpi=150)
   
-def show_dep(x,data,z,filename,zmax=0.0):
-  x_low, data_low, z_low = resampling(x,data,z,zmax)
+def show_dep(x,data,z,filename,maxalt=0.0,maxdays=0.0):
+  x_low, data_low, z_low = resampling(x,data,z,maxalt,maxdays)
   fig, ax = get_figure(True)
 
   masked = np.ma.array (data_low, mask=np.isnan(data_low))
@@ -206,8 +214,8 @@ def show_dep(x,data,z,filename,zmax=0.0):
   plt.ylabel('Height AGL [km]')
   fig.savefig(filename, bbox_inches='tight', dpi=150)
   
-def show_cal(x,data,z,zb,zt,filename,zmax=0.0):
-  x_low, data_low, z_low = resampling(x,data,z,zmax)
+def show_cal(x,data,z,zb,zt,filename,maxalt=0.0,maxdays=0.0):
+  x_low, data_low, z_low = resampling(x,data,z,maxalt,maxdays)
   fig, ax = get_figure(True)
 
   CS    = ax.pcolormesh(x_low,z_low,data_low, cmap=my_cmap, vmin=0, vmax=2E5)

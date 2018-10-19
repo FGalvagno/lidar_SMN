@@ -9,7 +9,7 @@ import os
 Debug    = True
 ############################################################################
 
-def save_ncd(filename, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, invtop, NZ1, NZ2):
+def save_ncd(filename, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, zpbl, invtop, NZ1, NZ2):
   if Debug:
     print "**********************"
     print "Creating output file: {}".format(filename)
@@ -73,6 +73,11 @@ def save_ncd(filename, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb
   zt1.units = "km"
   zt1.description = "Cloud Top"
   zt1[:] = zt
+
+  zpbl1 = ncfile.createVariable("zpbl","f4",("time",))
+  zpbl1.units = "km"
+  zpbl1.description = "PBL Height"
+  zpbl1[:] = zpbl
 
   zinv1 = ncfile.createVariable("zinv","f4",("time",))
   zinv1.units = "km"

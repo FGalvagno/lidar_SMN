@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<title>Productos Lidar</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="styles.css">
+
+<script src="myScript.js"></script>
+
+<body class="w3-light-grey">
+
+  <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
+    <!-- Avatar image in top left corner -->
+    <img src="images/smn_short.jpg" style="width:100%">
+    <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-home w3-xxlarge"></i>
+      <p>Home</p>
+    </a>
+    <a href="#stations" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-globe w3-xxlarge"></i>
+      <p>Estaciones</p>
+    </a>
+    <a href="#about" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-user w3-xxlarge"></i>
+      <p>About</p>
+    </a>
+    <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-envelope w3-xxlarge"></i>
+      <p>Contacto</p>
+    </a>
+  </nav>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top w3-light-grey w3-hide-large w3-hide-medium">
+  <div class="w3-bar" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="#home" class="w3-bar-item w3-button">HOME</a>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide">
+    <a href="#stations" class="w3-bar-item w3-button" onclick="toggleFunction()">Estaciones</a>
+    <a href="#about" class="w3-bar-item w3-button" onclick="toggleFunction()">About</a>
+    <a href="#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">Contacto</a>
+  </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-display-container w3-padding-large" id="main">
+  
+  <!-- Header/Home -->
+  <header class="w3-container w3-padding-32 w3-center w3-text-white" id="home">
+    <h1 class="w3-jumbo">Productos Lidar</h1>
+    <p>Generación de productos y diseño web por L. Mingari</p>
+  </header>
+
+  <!-- Stations Section -->
+  <div class="w3-padding-64 w3-content" id="stations">
+    <h2 class="w3-text-black">Estaciones Lidar</h2>
+    <hr class="w3-black w3-opacity">
+    <h4 class="w3-text-black w3-left">
+      <i class="fa fa-map-marker"></i>
+      Mapa de las estaciones:
+    </h4><br>
+    <h5 class="w3-text-red w3-right">
+      <i class="fa fa-exclamation-triangle"></i>
+      Para acceder a los datos lidar, haga click en el mapa 
+      sobre la estación
+    </h5>
+
+    <div id="map"></div>
+    <script>
+      function initMap() {
+    var locations = [
+      ['Punta Arenas', -53.16383, -70.91707, 17, 'parenas_b.html'],
+      ['Rio Gallegos', -51.62305, -69.21683, 16, 'gallegos_b.html'],
+      ['Tucuman', -26.80828, -65.21759, 15, 'tucuman_b.html'],
+      ['Bariloche', -41.13347, -71.31028, 14, 'bariloche_b.html'],
+      ['Comodoro Rivadavia', -45.86561, -67.48224, 13, 'comodoro_b.html'],
+      ['Buenos Aires', -34.603722, -58.381592, 12, 'aeroparque_b.html'],
+      ['Cordoba', -31.413500, -64.181050, 11, 'cordoba_b.html'],
+      ['Neuquen', -38.94587, -68.07309, 10, 'neuquen_b.html'],
+    ];
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          mapTypeId: 'hybrid',
+          zoom: 4,
+          center: {lat: -40, lng: -65}
+        });
+
+        for (var i = 0; i < locations.length; i++) 
+        {
+          var place = locations[i];
+          var marker = new google.maps.Marker({
+            position: {lat: place[1], lng: place[2]},
+            map: map,
+            title: place[0],
+            zIndex: place[3],
+            url:  place[4]
+          });
+
+        google.maps.event.addListener(marker, 'click', function() {
+            window.location.href = this.url;
+        });
+      }
+      }
+    </script> <br>
+
+    <h4 class="w3-text-black w3-left">
+      <i class="fa fa-map-marker"></i>
+      Acceso a los datos de cada estación:
+    </h4><br>
+    <h5 class="w3-text-red w3-right">
+      <i class="fa fa-exclamation-triangle"></i>
+      Pase el cursor sobre la foto para ver el nombre de la estación y 
+      haga click para acceder a los datos lidar
+    </h5>
+    <!-- Grid for stations -->
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+        <a href="parenas_b.html">
+          <div class="container">
+            <img src="images/parenas.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Punta Arenas</div>
+            </div>
+          </div>
+        </a>
+        <a href="aeroparque_b.html">
+          <div class="container">
+            <img src="images/baires.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Buenos Aires (Aeroparque)</div>
+            </div>
+          </div>
+        </a>
+        <a href="gallegos_b.html">
+          <div class="container">
+            <img src="images/gallegos.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Río Gallegos</div>
+            </div>
+          </div>
+        </a>
+        <a href="neuquen_b.html">
+          <div class="container">
+            <img src="images/neuquen.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Neuquén</div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="w3-half">
+        <a href="comodoro_b.html">
+          <div class="container">
+            <img src="images/comodoro.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Comodoro Rivadavia</div>
+            </div>
+          </div>
+        </a>
+        <a href="bariloche_b.html">
+          <div class="container">
+            <img src="images/bariloche.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Bariloche</div>
+            </div>
+          </div>
+        </a>
+        <a href="tucuman_b.html">
+          <div class="container">
+            <img src="images/tucuman.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Tucumán</div>
+            </div>
+          </div>
+        </a>
+        <a href="cordoba_b.html">
+          <div class="container">
+            <img src="images/cordoba.jpg" class="image">
+            <div class="overlay">
+              <div class="text">Córdoba</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    <!-- End grid -->
+    </div>
+  <!-- End Stations Section -->
+  </div>
+
+  <!-- About Section -->
+  <div class="w3-content w3-justify w3-text-grey w3-padding-64" id="about">
+    <h2 class="w3-text-black">Productos Lidar</h2>
+    <hr class="w3-black w3-opacity">
+    <p>En este sitio se muestran los productos básicos 
+    obtenidos a partir de la señal lidar de retrodispersión 
+    elástica para los canales elásticos 1064 nm y 532 nm.
+    </p>
+
+    <p>El métodos empleado está basado en los principios 
+    empleados para obtener los productos operativos del 
+    National Institute for Environmental Studies, Japón. 
+    Una descripción de este método puede encontrarse en 
+    <a href="https://doi.org/10.1117/1.OE.56.3.031219"> 
+    Shimizu et al. [2017]</a>. Estos algoritmos han sido 
+    desarrollados para ser aplicados a la red de instrumentos 
+    lidares de AD-Net (Asian dust and aerosol lidar observation 
+    network) siendo probados y validados principalmente para
+    el caso de polvo mineral asiático. Nosotros hemos 
+    implementado estos productos con el fin de aplicarlos a 
+    la red de lidares ubicados en Argentina y Chile en el 
+    marco del proyecto SAVERNet (Sistema de Gestión de Riesgos
+    Medioambientales Atmosféricos en Sudamérica). Si bien estos 
+    productos brindan información valiosa actualmente, aún se 
+    encuentran en fase experimental y se requiere un periodo de
+    pruebas y validaciones con datos externos e independientes 
+    para poder adaptarlos a las condiciones que imperan en 
+    nuestra región.
+    </p>
+
+    <p>Los productos de datos Lidar están disponibles en 
+    nivel 1 y 2 en forma operacional. Los datos de nivel 1 
+    se obtienen hasta una altura de 18 km, mientras que los 
+    datos de nivel 2 comprenden una altura de hasta 9 km, 
+    con una resolución vertical de 30 m en ambos casos.
+    </p>
+
+    <p>Para más información, descarge el informe técnico</p>
+
+    <a href="nota_tecnica.pdf" >
+    <button class="w3-button w3-dark-grey w3-padding-large w3-section">
+      <i class="fa fa-download"></i> Informe Técnico
+    </button>
+    </a>
+    <br>
+    <a href="https://github.com/lmingari/lidar_SMN">
+    <button class="w3-button w3-dark-grey w3-padding-large w3-section">
+      <i class="fa fa-git"></i> Código Python
+    </button>
+    </a>    
+  </div>
+
+  <!-- Contact Section -->
+  <div class="w3-padding-64 w3-content w3-text-grey" id="contact">
+    <h2 class="w3-text-black">Contacto</h2>
+    <hr class="w3-black w3-opacity">
+    <p>Los productos lidar y el diseño web han sido generados por Leonardo A. Mingari.</p>
+
+    <p>Ante cualquier duda o sugerencia, contácteme a:</p>
+    <div class="w3-section">
+      <p><i class="fa fa-map-marker fa-fw w3-text-dark-grey w3-xxlarge w3-margin-right"></i> Av. Dorrego 4019, Buenos Aires (Departamento de Investigación y Desarrollo - SMN)</p>
+      <p><i class="fa fa-phone fa-fw w3-text-dark-grey w3-xxlarge w3-margin-right"></i> +54 9 11 5332-9557</p>
+      <p><i class="fa fa-envelope fa-fw w3-text-dark-grey w3-xxlarge w3-margin-right"> </i> lmingari@gmail.com</p>
+    </div><br>
+
+    <p>O a través del siguiente formulario:</p>
+    <form role="form" action="mailer.php" method="post">
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Nombre" required name="name"></p>
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Email" required name="email"></p>
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Celular" required name="mobile"></p>
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Mensaje" required name="message"></p>
+      <p><input name="submit" type="submit" value="Enviar Mensaje" class="w3-button w3-dark-grey w3-right" /></p>
+    </form>
+  <!-- End Contact Section -->
+  </div>
+
+    <!-- Footer -->
+  <footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge w3-center">
+    <hr style="width:100%" class="w3-black w3-opacity">
+    <p> <img src="images/smn.png" style="width:30%"> </p>
+    <a href="https://www.facebook.com/SMN.ar/" class="social">
+      <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    </a>
+    <a href="https://www.instagram.com/smn_argentina/" class="social">
+      <i class="fa fa-instagram w3-hover-opacity"></i>
+    </a>
+    <a href="https://twitter.com/smn_argentina" class="social">
+      <i class="fa fa-twitter w3-hover-opacity"></i>
+    </a>
+    <a href="https://www.youtube.com/user/SMNprensa" class="social">
+      <i class="fa fa-youtube w3-hover-opacity"></i>
+    </a>
+    <p style="font-size:small"> &copy L. Mingari 2018 </p>
+  <!-- End footer -->
+  </footer>
+
+<!-- END PAGE CONTENT -->
+</div>
+
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWw7SACPs0ii_5tXJT8WTxJaY3_qJ0IaE&callback=initMap">
+</script>
+
+</body>
+</html>

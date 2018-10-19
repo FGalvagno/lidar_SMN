@@ -1,11 +1,12 @@
 #!/usr/bin/python2
 
-import os.path
+from os.path import isfile, join, dirname, abspath
 import sys
 from Reading import ReadRaw
 from Inversion import Invert532
 from datetime  import datetime, timedelta, time
 from ConfigParser import SafeConfigParser
+from Web import WEBoutput
 
 ################# Parameters ###############################################
 #cfgpath       = "/home/leonardo/Desktop/lidar_SMN/"                        # Absolute Path with cfg file
@@ -15,8 +16,8 @@ t1            = (t2-timedelta(days=22)).replace(hour=0, minute=0)          # Sta
 Debug         = True
 ############################################################################
 
-cfgpath       = os.path.dirname(os.path.abspath(__file__))
-cfgpath       = os.path.join(cfgpath, cfgfile)
+cfgpath       = dirname(abspath(__file__))
+cfgpath       = join(cfgpath, cfgfile)
 
 station_list  = ['aeroparque',
                  'bariloche',
@@ -46,6 +47,8 @@ block      = station_block
 sampling   = config.getint(block, "sampling")
 FileSize   = config.getint(block, "FileSize")
 prefix     = config.get(block, "prefix")
+ncpath_out = config.get("Paths", "ncpath_out")
+ncfile_out = config.get("Paths", "ncfile_out")
 ncpath_raw = config.get("Paths", "ncpath_raw")
 ncfile_raw = config.get("Paths", "ncfile_raw")
 binpath    = config.get("Paths", "binpath")
@@ -58,13 +61,14 @@ t1_data, t2_data = ReadRaw.findtimes(t1,t2,sampling,binpath,prefix,ncpath_raw+pr
 print "Time range found: {}-{}".format(t1_data, t2_data)
 if t2_data>t1_data:
   x, y1, y2, y3, z, height = ReadRaw.get_data(t1_data,t2_data,sampling,binpath,prefix,FileSize)
-  if os.path.isfile(ncpath_raw+prefix+ncfile_raw):
+  if isfile(ncpath_raw+prefix+ncfile_raw):
     print "Updating file: ", prefix+ncfile_raw
     ReadRaw.updatencd(x, y1, y2, y3, z, ncpath_raw+prefix+ncfile_raw)
   else:
     print "Creating a new file: ", prefix+ncfile_raw
     ReadRaw.createncd(x, y1, y2, y3, z, height, ncpath_raw+prefix+ncfile_raw)
   Invert532.invert(block,cfgpath)
+  WEBoutput.CreateJS(block, join(ncpath_out,block), ncfile_out)
 else:
   print "Nothing to do"
   print "Waiting for new data"

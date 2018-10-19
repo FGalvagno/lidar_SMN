@@ -4,6 +4,8 @@ lidar-v2.2
 Updates:
 16 abr 2018: 
 File checking improved in ReadRaw module
+17 abr 2018:
+Changed colour palette as Caliop one
 **********
 
 Lidar Products for Elastic Scattering - SAVERNet Project
