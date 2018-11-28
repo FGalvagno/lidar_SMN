@@ -1,38 +1,11 @@
-#!/usr/bin/python
-import matplotlib
-matplotlib.use('GTKAgg') 
+#!/usr/bin/env python2
 
-from netCDF4 import Dataset, num2date
-from datetime import datetime, timedelta
 import numpy as np
 import matplotlib.pyplot as plt
-from ConfigParser import SafeConfigParser
-import Plots
-
-################# Parameters ###############################################
-cfgfile    = "../../parameters.cfg"
-block      = "neuquen"
-varname    = "ch3"                                                         # Channel
-yrfile     = 'overlap.cfg'                                                 # Overlap file
-t1         = datetime(year=2017, month=6, day=11, hour=19, minute=0)       # Start date and time
-t2         = datetime(year=2017, month=6, day=11, hour=22, minute=0)       # Final date and time
-Plot       = True
-Smooth     = False
-Debug      = True
-############################################################################
-
-config = SafeConfigParser()
-config.read(cfgfile)
-
-#Read parameters from an external file (string case)
-station    = config.get(block, "prefix")
-wsmooth    = config.getint(block, "wsmooth")
-ncpath_raw = config.get("Paths", "ncpath_raw")
-ncfile_raw = config.get("Paths", "ncfile_raw")
-#ncfile_raw = station + ncfile_raw
 
 class SelectPoint:
-    def __init__(self, data,z):
+    def __init__(self,data,z,yrfile):
+        self.yrfile = yrfile
         self.fig, self.axarr = plt.subplots(2, sharex=True)
         self.axarr[0].semilogx(data,z,'-')
 
@@ -90,7 +63,7 @@ class SelectPoint:
             #self.yr[:nmin] = self.yr[:nmin] + np.exp(pol(self.z[:nmin])) / self.data[:nmin,it]
             self.yr[:nmin] = self.yr[:nmin] + pol(self.z[:nmin]) / self.data[:nmin,it]
         self.yr[:nmin] = self.yr[:nmin] / nt
-        np.savetxt(yrfile, zip(self.z, self.yr), fmt='%0.8f', header='altitude (km) | overlap factor')    
+        np.savetxt(self.yrfile, zip(self.z, self.yr), fmt='%0.8f', header='altitude (km) | overlap factor')    
 
     def overlap_mean(self):
         nmin  = np.argmin(np.abs(self.z-self.zlim[0]))
@@ -113,7 +86,7 @@ class SelectPoint:
 #            self.yr[iz-1]=self.yr[iz]
         print "We set yr=1 below of {} m".format(1000*hmin)
         print "Saving data..."
-        np.savetxt(station+yrfile, zip(self.z, self.yr), fmt='%0.8f', header='altitude (km) | overlap factor')
+        np.savetxt(self.yrfile, zip(self.z, self.yr), fmt='%0.8f', header='altitude (km) | overlap factor')
 
 #        ff, aa = plt.subplots()
 #        aa.plot(self.yr[:nmin], self.z[:nmin],'o-')
@@ -121,59 +94,3 @@ class SelectPoint:
 #        ff.savefig('overlap.png', bbox_inches='tight', dpi=150)
 #        plt.close(ff)
 
-if Debug: print "Opening file: ", ncpath_raw+ncfile_raw
-### Read Time, Data (mV), Heigth (km)
-ds       = Dataset(ncpath_raw+ncfile_raw)
-data     = ds.variables[varname][:]
-times    = ds.variables["time"]
-z        = ds.variables["alt"][:]
-x        = num2date(times[:],units=times.units)
-ds.close()
-
-data = data.T 
-
-### Number of profiles and vertical levels
-NX = len(x)
-NZ = len(z)
-
-n1 = n2 = 0
-for ix in range(NX):
-  if x[ix]>=t1 and not n1: n1=ix
-  if x[ix]> t2 and not n2: n2=ix
-    
-fig, axarr = plt.subplots(2)
-axarr[0].semilogy(data[:,n1:n2],z,'-')
-axarr[0].set_xlabel(r'Lidar signal $[mV]$') 
-axarr[1].set_xlabel(r'Range-corrected Lidar signal $[mV \, \, km^2]$')
-axarr[0].set_ylabel(r'Altitude $[km]$')
-axarr[1].set_ylabel(r'Altitude $[km]$')  
-    
-if varname=='ch3':
-  for it in range(NX):
-    coeff = np.polyfit(z[-2000:], data[-2000:,it], 1)
-    pol   = np.poly1d(coeff)
-    data[:,it] = (data[:,it] - pol(z)) *z**2
-   # data[:,it] = (data[:,it] - np.mean(data[-100:,it])) *z**2
-elif varname=='ch2':
-  for it in range(NX):
-    coeff = np.polyfit(z[-1000:], data[-1000:,it], 1)
-    pol   = np.poly1d(coeff)
-    data[:,it] = (data[:,it] - pol(z)) *z**2
-else:
-  for it in range(NX):
-    coeff = np.polyfit(z[-1000:], data[-1000:,it], 1)
-    pol   = np.poly1d(coeff)
-    data[:,it] = (data[:,it] - pol(z)) *z**2
-
-### Smoothing
-if Smooth:
-  print "Performing smoothing with parameter wsmooth:{}".format(wsmooth)
-  for it in range(NX):
-    data[:,it] = np.convolve(data[:,it],np.ones(wsmooth)/wsmooth,mode='same')
-    
-if Plot: Plots.show_raw(x,data,z,zmax=18.0,vmax=2)
-
-axarr[1].plot(data[:,n1:n2],z,'-')
-dr = SelectPoint(data[:,n1:n2],z)
-
-plt.show()
