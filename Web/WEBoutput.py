@@ -14,6 +14,7 @@ st_name  = {'comodoro':   "Comodoro Rivdavia station",
             'parenas':    "Punta Arenas station", 
             'neuquen':    "Neuquen station",
             'vmartelli':  "Villa Martelli station",
+	    'cordoba':    "Cordoba station",
             }
 
 def CreateJS(block, ncpath, ncfile):

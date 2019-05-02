@@ -43,6 +43,8 @@ class Channel(object):
     self.BinSize          = s[6]
     self.Wavelength       = s[7]
     self.isPolarized      = s[8]
+    #Correction for Cordoba station
+    if self.isPolarized=='s': self.isPolarized='o'
     self.ADC              = s[9]
     self.Shots            = s[10]
     if self.Shots==0:

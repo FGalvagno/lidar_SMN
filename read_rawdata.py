@@ -7,9 +7,9 @@ from os.path import isfile, join, dirname, abspath
 import sys
 
 ################# Parameters ###############################################
-cfgfile       = "parameters.cfg"                                            # CFG file
-t1            = datetime(year=2018, month=5,  day=17, hour=0, minute=0)     # Start date and time
-t2            = datetime(year=2018, month=10, day=6,  hour=0, minute=0)     # Final date and time
+cfgfile       = "parameters.cfg"                                           # CFG file
+t1            = datetime(year=2019, month=4, day=1,  hour=0, minute=0)     # Start date and time
+t2            = datetime(year=2019, month=4, day=30, hour=0, minute=0)     # Final date and time
 Debug         = True
 ############################################################################
 
