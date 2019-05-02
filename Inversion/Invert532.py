@@ -122,10 +122,10 @@ def invert(station_block, cfgfile):
     ch3[:,ix] = ch3[:,ix] * c3[ix]
   
   ### Polarization correction (Experimental!)
-  depol_estimated = Calibration.depol(ch1, ch2, z)
-  if depol_estimated>1.0:
-    if Debug: print "Using depol={} instead of depol={}".format(depol_estimated, depol)
-    depol = depol_estimated
+  #depol_estimated = Calibration.depol(ch1, ch2, z)
+  #if depol_estimated>1.0:
+  #  if Debug: print "Using depol={} instead of depol={}".format(depol_estimated, depol)
+  #  depol = depol_estimated
     
   para   = ch1                                       # Parallel component - Visible channel
   perp   = (ch2 - ch1 * leakrate) / depol            # Perpendicular component - Visible channel
