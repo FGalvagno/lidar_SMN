@@ -1,11 +1,12 @@
 #!/usr/bin/python
 
-import os.path
+from os.path import isfile, join
 import sys
 from Reading import ReadRaw
 from Inversion import Invert532
 from datetime  import datetime, timedelta, time
 from ConfigParser import SafeConfigParser
+from Web import WEBoutput
 
 ################# Parameters ###############################################
 cfgpath       = "./"                                                       # Absolute Path with cfg file
@@ -41,10 +42,13 @@ block      = station_block
 prefix     = config.get(block, "prefix")
 ncpath_raw = config.get("Paths", "ncpath_raw")
 ncfile_raw = config.get("Paths", "ncfile_raw")
+ncpath_out = config.get("Paths", "ncpath_out")
+ncfile_out = config.get("Paths", "ncfile_out")
 
-if os.path.isfile(ncpath_raw+prefix+ncfile_raw):
+if isfile(ncpath_raw+prefix+ncfile_raw):
   print "Working with file: ", ncpath_raw+prefix+ncfile_raw
   Invert532.invert(block,cfgpath+cfgfile)
+  WEBoutput.CreateJS(block, join(ncpath_out,block), ncfile_out)
 else:
   print "Unable to open file: ", ncpath_raw+prefix+ncfile_raw
   print "Nothing to do"

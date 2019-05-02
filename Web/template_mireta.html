@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<title>{{title}}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="styles.css">
+
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.15.min.css" type="text/css">
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.15.min.css" type="text/css">
+<script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.15.min.js"></script>
+<script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.15.min.js"></script>
+
+<script src="myScript.js"></script>
+
+<body class="w3-light-grey">
+
+  <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
+    <!-- Avatar image in top left corner -->
+    <img src="images/smn_short.jpg" style="width:100%">
+    <a href="index.html#" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-home w3-xxlarge"></i>
+      <p>Home</p>
+    </a>
+    <a href="index.html#stations" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-globe w3-xxlarge"></i>
+      <p>Estaciones</p>
+    </a>
+    <a href="index.html#about" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-user w3-xxlarge"></i>
+      <p>About</p>
+    </a>
+    <a href="index.html#contact" class="w3-bar-item w3-button w3-padding-large w3-white">
+      <i class="fa fa-envelope w3-xxlarge"></i>
+      <p>Contacto</p>
+    </a>
+  </nav>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top w3-light-grey w3-hide-large w3-hide-medium">
+  <div class="w3-bar" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="index.html#home" class="w3-bar-item w3-button">HOME</a>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide">
+    <a href="index.html#stations" class="w3-bar-item w3-button" onclick="toggleFunction()">Estaciones</a>
+    <a href="index.html#about" class="w3-bar-item w3-button" onclick="toggleFunction()">About</a>
+    <a href="index.html#contact" class="w3-bar-item w3-button" onclick="toggleFunction()">Contacto</a>
+  </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-display-container w3-padding">
+  
+  <!-- Stations Section -->
+  <div class="w3-padding w3-content">
+    <h2 class="w3-text-black">{{header}}</h2>
+    <hr class="w3-black w3-opacity">
+  </div>
+
+  <div class="w3-content">
+    {{block}}
+  </div>
+
+<!-- END PAGE CONTENT -->
+</div>
+
+</body>
+</html>

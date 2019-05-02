@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 import Calibration
 import CloudDetect
@@ -40,6 +40,7 @@ def invert(station_block, cfgfile):
   rth4       = config.getfloat(block, "rth4")
   rth6       = config.getfloat(block, "rth6")
   pblth      = config.getfloat(block, "pblth")
+  snrth      = config.getfloat(block, "snrth")
 
   #Read parameters from an external file (string case)
   station    = config.get(block, "prefix")
@@ -163,7 +164,8 @@ def invert(station_block, cfgfile):
     lvis = np.full((NZ,NX),np.nan)
     lir  = np.full((NZ,NX),np.nan)
     ldep = np.full((NZ,NX),np.nan)
-    lz   = np.mean(z.reshape(-1, wz), axis=1)
+#    lz   = np.mean(z.reshape(-1, wz), axis=1)
+    lz = np.copy(z[wz-1::wz])
     DZ = lz[1]-lz[0]
     DZinv = 1.0/DZ
     with warnings.catch_warnings():
@@ -183,7 +185,7 @@ def invert(station_block, cfgfile):
 
   ### Cloud Detection
   zb, zt          = CloudDetect.cloud_height(lvis,lir,lz,clgrad,clth)           # Detect Cloud Base above 240 m
-  rf, pbl, invtop = CloudDetect.phenomena(lvis,lir,ldep,lz,zb,rth1,rth4,pblth)
+  rf, pbl, invtop = CloudDetect.phenomena(lvis,lir,ldep,lz,zb,rth1,rth4,pblth,snrth)
 
   if PlotCal:
     print "Plotting calibrated signal..."
@@ -305,19 +307,29 @@ def invert(station_block, cfgfile):
 
   if PlotBeta:
     print "Plotting attenuated backscatter coefficients..."
-    Plots.show_beta(x,1000.0*absc532,lz,ncpath_out+'absc_vis.png',zmax=18)
-    Plots.show_beta(x,1000.0*absc1064,lz,ncpath_out+'absc_ir.png',zmax=18)
+    Plots.show_beta(x,1000.0*absc532,lz,
+                    fname=ncpath_out+'absc_vis.png',
+                    label="Attenuated Backscatter coefficient at 532 nm",
+                    maxalt=12,
+                    maxdays=30,
+                    )
+    Plots.show_beta(x,1000.0*absc1064,lz,
+                    fname=ncpath_out+'absc_ir.png',
+                    label="Attenuated Backscatter coefficient at 1064 nm",
+                    maxalt=12,
+                    maxdays=30,
+                    )
 
   if PlotAlpha:
     print "Plotting extinction coefficients..."
-    Plots.show_alpha(x,1000.0*dust,lz,zb,zt,invtop,ncpath_out+'dust.png',zmax=9)
-    Plots.show_alpha(x,1000.0*sphere,lz,zb,zt,invtop,ncpath_out+'sphere.png',zmax=9)
+    Plots.show_alpha(x,1000.0*dust,lz,zb,zt,invtop,ncpath_out+'dust.png',     maxalt=9, maxdays=7)
+    Plots.show_alpha(x,1000.0*sphere,lz,zb,zt,invtop,ncpath_out+'sphere.png', maxalt=9, maxdays=7)
 
   if PlotDep:
     print "Plotting depolarization ratio..."
     with np.errstate(invalid='ignore'):
       ldep[absc532<1E-7]=np.nan
-    Plots.show_dep(x,ldep,lz,ncpath_out+'dep.png',zmax=18)
+    Plots.show_dep(x,ldep,lz,ncpath_out+'dep.png',maxalt=18)
     
   if AshOut:
     print "Ash detection..."
@@ -339,7 +351,7 @@ def invert(station_block, cfgfile):
     print "Creating NetCDF file: {}".format(ncpath_out+ncfile_out)
     NZ1 = iz_18km+1
     NZ2 = iz_9km+1
-    InOut.save_ncd(ncpath_out+ncfile_out, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, invtop, NZ1, NZ2)
+    InOut.save_ncd(ncpath_out+ncfile_out, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, pbl, invtop, NZ1, NZ2)
     
   if NCDmonth:
     print "Creating monthly NetCDF files"

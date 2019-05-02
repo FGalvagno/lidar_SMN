@@ -1,0 +1,63 @@
+#option batch abort
+option confirm off
+open sftp://lmingari:lm1ng4ri.17@10.10.22.155 -hostkey="ssh-rsa 2048 ec:44:e6:c5:1c:c6:35:d6:51:ac:b4:e0:ad:a0:09:1f"
+
+
+# Change remote directory
+cd salida
+lcd e:\Mir-Eta\www\aeronautica\LIDAR
+
+# Force ascii mode transfer
+option transfer ascii
+cd aeroparque
+get aeroparque.js
+get aeroparque_b.html
+cd ..
+
+cd bariloche
+get bariloche.js
+get bariloche_b.html
+cd ..
+
+cd comodoro
+get comodoro.js
+get comodoro_b.html
+cd ..
+
+cd cordoba
+get cordoba.js
+get cordoba_b.html
+cd ..
+
+cd gallegos
+get gallegos.js
+get gallegos_b.html
+cd ..
+
+cd neuquen
+get neuquen.js
+get neuquen_b.html
+cd ..
+
+cd parenas
+get parenas.js
+get parenas_b.html
+cd ..
+
+cd tucuman
+get tucuman.js
+get tucuman_b.html
+cd ..
+
+cd vmartelli
+get vmartelli.js
+get vmartelli_b.html
+cd ..
+
+
+# Disconnect
+close
+
+# Exit WinSCP
+exit
+

@@ -40,7 +40,7 @@ def cloud_height(vis,ir,z,clgrad,clth):
           break
   return zb, zt
 
-def phenomena(vis,ir,dep,z,zb,rth1,rth4,pblth):
+def phenomena(vis,ir,dep,z,zb,rth1,rth4,pblth,snrth):
   NX = ir.shape[-1]
   NZ = ir.shape[0]
   DZ = z[1]-z[0]
@@ -71,7 +71,7 @@ def phenomena(vis,ir,dep,z,zb,rth1,rth4,pblth):
     with np.errstate(divide='ignore', invalid='ignore'):
       cr = np.where(profile_vis == 0, np.nan, profile_ir/profile_vis)
     ###
-    std_tail = np.nanstd(profile_vis[iz_15km:iz_16km]) * 0.1
+    std_tail = np.nanstd(profile_vis[iz_15km:iz_16km]) * snrth
     for iz in range(iz_450,iz_9km): 
       if profile_vis[iz]<std_tail:
         nlg[ix] = z[iz]

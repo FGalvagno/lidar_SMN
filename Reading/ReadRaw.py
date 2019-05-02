@@ -1,92 +1,92 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 from LoadLicel import LoadLicel
 from netCDF4   import Dataset, num2date, date2num
 from datetime  import datetime, timedelta, time
 import numpy as np
 import os
+from os.path import isfile, join
 
 ################# Parameters ###############################################
-dt       = timedelta(minutes=1)                                            # Delta time (1 min). NO CHANGE
-#FileSize = 82492                                                           # Filesize in bytes
-Debug    = True
+dt           = timedelta(minutes=1)                                        # Delta time (1 min). NO CHANGE
+#FileSize = 82492                                                          # Filesize in bytes
+fmt          = "%y%m%d%H.%M%S"                                             # Format file
+channel_list = ["532oo","532po","1064oo"]
+Debug        = True
 ############################################################################
 
-def findtimes(t1,t2,sampling,path,prefix,ncfile,FileSize):
-  print "Using File size: {}".format(FileSize)
-  if os.path.isfile(ncfile):
+def read_firstline(fname):
+  with open(fname,'r') as f:
+    output = f.readline()
+  return output.strip()
+
+def valid_files(prefix,tdate,bpath,FileSize):
+  folder = bpath + tdate.strftime("%Y%m%d/")
+  bname  = prefix + tdate.strftime("%y") + format(tdate.month,'X') + tdate.strftime("%d")
+  
+  verify_name = lambda x: bname in x and len(x)==15
+  verify_size = lambda x: os.stat(folder + x).st_size == FileSize
+  verify_head = lambda x: read_firstline(folder + x) == x
+  verify_file = lambda x: verify_name(x) and verify_size(x) and verify_head(x)
+  
+  filelist_folder = [f for f in os.listdir(folder) if isfile(join(folder, f))]
+  filelist_folder = filter(verify_file, filelist_folder)
+  filelist_folder.sort()
+  return filelist_folder
+
+def parse_datetime(st):
+  date_st = st[1:3] + "{:02d}".format(int(st[3],16)) + st[4:13]
+  return datetime.strptime(date_st, fmt)
+
+def findtimes(t1,t2,sampling,bpath,prefix,ncfile,FileSize):
+  print "File checking assuming size: {} B".format(FileSize)
+  if isfile(ncfile):
     if Debug: print "Found file: ", ncfile
     ncfile = Dataset(ncfile,'r',format="NETCDF3_CLASSIC") 
     t      = ncfile.variables["time"]
-    t1_out = num2date(t[-1], units = t.units)
+    t1_raw = num2date(t[-1], units = t.units)
     ncfile.close()
   else:
     if Debug: print "Not found file: ", ncfile
-    t = t1.date()
+    td = t1.date()
     SearchFile = True
-    while t<=t2.date() and SearchFile:
-      folder = t.strftime("%Y%m%d/")
-      if os.path.exists(path + folder): 
-        filename = prefix + t.strftime("%y") + format(t.month,'X') + t.strftime("%d")
-        filelist_folder = os.listdir(path + folder)
-        filelist_folder = filter(lambda x: filename in x , filelist_folder)
-        filelist_folder = filter(lambda x: os.stat(path + folder + x).st_size == FileSize, filelist_folder)
+    while td<=t2.date() and SearchFile:
+      folder = td.strftime("%Y%m%d/")
+      if os.path.exists(bpath + folder): 
+        filelist_folder = valid_files(prefix,td,bpath,FileSize)
         if filelist_folder:
-          if t1.date() == t:
-            tt       = t1
-          else:
-            tt       = datetime.combine(t, time())
-            dt_shift = timedelta( minutes = int((tt-t1).total_seconds()//60.0) % sampling )
-            tt       = tt - dt_shift
-          ChangeFolder = False
-          while SearchFile and not ChangeFolder:
-            for it in range(sampling):
-              t0 = tt + it * dt
-              if t0.date()>t: 
-                ChangeFolder = True
-                break
-              else:
-                filename = prefix + t0.strftime("%y") + format(t0.month,'X') + t0.strftime("%d%H.%M")
-              if any([filename in item for item in filelist_folder]):
-                SearchFile = False
-                t1_out = tt
-                break
-            tt = tt + dt*sampling
-      t = t + timedelta(days=1)
-    if SearchFile: t1_out = t2
-
-  t = t2.date()
+          if t1<=parse_datetime(filelist_folder[0]):
+            SearchFile = False
+            t1_raw     = parse_datetime(filelist_folder[0])
+          elif t1<=parse_datetime(filelist_folder[-1]):
+            SearchFile = False
+            t1_raw     = next(parse_datetime(x) for x in filelist_folder if parse_datetime(x)>=t1) 
+      td += timedelta(days=1)
+    if SearchFile: t1_raw = t2
+  
+  td = t2.date()
   SearchFile = True
-  while t>=t1_out.date() and SearchFile:
-    folder = t.strftime("%Y%m%d/")
-    if os.path.exists(path + folder): 
-      filename = prefix + t.strftime("%y") + format(t.month,'X') + t.strftime("%d")
-      filelist_folder = os.listdir(path + folder)
-      filelist_folder = filter(lambda x: filename in x , filelist_folder)
-      filelist_folder = filter(lambda x: os.stat(path + folder + x).st_size == FileSize, filelist_folder)
+  while td>=t1_raw.date() and SearchFile:
+    folder = td.strftime("%Y%m%d/")
+    if os.path.exists(bpath + folder): 
+      filelist_folder = valid_files(prefix,td,bpath,FileSize)
       if filelist_folder:
-        if t2.date() == t: tt = t2
-        else: tt = datetime.combine(t+timedelta(days=1), time())
-        dt_shift = timedelta( minutes = int((tt-t1).total_seconds()//60.0) % sampling )
-        tt       = tt - dt_shift
-        ChangeFolder = False
-        while SearchFile and not ChangeFolder:
-          for it in reversed(range(sampling)):
-            t0 = tt + it * dt
-            if t0.date()<t: 
-              ChangeFolder = True
-              break
-            else:
-              filename = prefix + t0.strftime("%y") + format(t0.month,'X') + t0.strftime("%d%H.%M")
-            if any([filename in item for item in filelist_folder]):
-              SearchFile = False
-              t2_out = tt
-              break
-          tt = tt - dt*sampling
-    t = t - timedelta(days=1)
-  if SearchFile: t2_out = t1_out
-            
-  return t1_out, t2_out
+        if t2>parse_datetime(filelist_folder[-1]):
+          SearchFile = False
+          t2_raw     = parse_datetime(filelist_folder[-1])
+        elif t2>parse_datetime(filelist_folder[0]):
+          SearchFile = False
+          t2_raw     = next(parse_datetime(x) for x in reversed(filelist_folder) if parse_datetime(x)<t2) 
+    td -= timedelta(days=1)
+  if SearchFile: t2_raw = t1_raw
+
+  dt_shift1 = timedelta( minutes = int((t1_raw-t1).total_seconds()//60.0)%sampling, 
+                        seconds = t1_raw.second
+                       )
+  dt_shift2 = timedelta( minutes = int((t2_raw-t1).total_seconds()//60.0)%sampling, 
+                        seconds = t2_raw.second
+                        )  
+  return t1_raw-dt_shift1, t2_raw-dt_shift2
   
 def get_data(t1,t2,sampling,path,prefix,FileSize):
   x_time=[]
@@ -98,55 +98,32 @@ def get_data(t1,t2,sampling,path,prefix,FileSize):
   x_time    = np.array(x_time)
   n_data    = np.zeros(NT)
   FileFound = False
-  t = t1.date()
-  while t<=t2.date():
-    folder = t.strftime("%Y%m%d/")
+  td = t1.date()
+  while td<=t2.date():
+    folder = td.strftime("%Y%m%d/")
     if os.path.exists(path + folder):
-      filename = prefix + t.strftime("%y") + format(t.month,'X') + t.strftime("%d")
-      filelist_folder = os.listdir(path + folder)
-      filelist_folder = filter(lambda x: filename in x and len(x)==15, filelist_folder)
-      filelist_folder = filter(lambda x: os.stat(path + folder + x).st_size == FileSize, filelist_folder)
+      filelist_folder = valid_files(prefix,td,path,FileSize)
       if filelist_folder:
-        print "Reading folder: ", folder
+        if Debug: print "Reading folder: ", folder
         for file_item in filelist_folder:
-          file_date = datetime.strptime(folder+file_item[:-4], "%Y%m%d/"+filename+"%H.%M")
-          i_time = int((file_date-t1).total_seconds()//(60.0*sampling))
+          file_date = parse_datetime(file_item)
+          i_time    = int((file_date-t1).total_seconds()//(60.0*sampling))
           if 0<=i_time<NT:
             n_data[i_time] = n_data[i_time] + 1
             # Get Licel data
-            x = LoadLicel(path + folder + file_item)
+            x = LoadLicel(path + folder + file_item, channel_list)
             if not FileFound:
-              height = x.globalparameters.HeightASL
-              z      = x.channel[0].Range * 0.001      # Height in kilometers
+              FileFound = True
+              height = x.GlobalP.HeightASL
+              z      = x.channel["532oo"].Range * 0.001      # Height in kilometers
               NZ     = len(z)
               y1     = np.zeros((NT,NZ))
               y2     = np.zeros((NT,NZ))
               y3     = np.zeros((NT,NZ))
-            for ichannel in range(x.globalparameters.Channels):
-              if not x.channel[ichannel].isPhotonCounting:
-                if x.channel[ichannel].Wavelength == 532 and not x.channel[ichannel].isPolarized:
-                  y1[i_time,:] = y1[i_time,:] + x.channel[ichannel].Signal
-                  if Debug and not FileFound:
-                    print "************ ch1 ************"
-                    print "Using channel: {} nm".format(x.channel[ichannel].Wavelength)    # Show data information
-                    for key, item in x.globalparameters.__dict__.items():
-                        print key + ": ", item
-                elif x.channel[ichannel].Wavelength == 532 and x.channel[ichannel].isPolarized:
-                  y2[i_time,:] = y2[i_time,:] + x.channel[ichannel].Signal
-                  if Debug and not FileFound:
-                    print "************ ch2 ************"
-                    print "Using channel: {} nm".format(x.channel[ichannel].Wavelength)    # Show data information
-                    for key, item in x.globalparameters.__dict__.items():
-                        print key + ": ", item
-                elif x.channel[ichannel].Wavelength == 1064 and not x.channel[ichannel].isPolarized:
-                  y3[i_time,:] = y3[i_time,:] + x.channel[ichannel].Signal
-                  if Debug and not FileFound:
-                    print "************ ch3 ************"
-                    print "Using channel: {} nm".format(x.channel[ichannel].Wavelength)    # Show data information
-                    for key, item in x.globalparameters.__dict__.items():
-                        print key + ": ", item
-            if not FileFound: FileFound = True
-    t = t + timedelta(days=1)
+            y1[i_time,:] += x.channel["532oo"].Signal
+            y2[i_time,:] += x.channel["532po"].Signal
+            y3[i_time,:] += x.channel["1064oo"].Signal
+    td += timedelta(days=1)
   for it in range(NT):
     if n_data[it]==0:
       y1[it,:] = np.nan
@@ -239,3 +216,16 @@ def updatencd(x, data1, data2, data3, z, ncfilename):
   ncfile.close()
   print "Done!"
   print "**********************"
+
+if __name__ == "__main__":
+  FileSize = 66042
+  sampling = 15
+  prefix   = "a"
+  path     = "/home/leonardo/Desktop/aeroparque/"
+  ncfile   = "void"
+  t1       = datetime(2019,3,20,11,0)
+  t2       = datetime(2019,3,24,23,46)
+  t1_out, t2_out = findtimes(t1,t2,sampling,path,prefix,ncfile,FileSize)
+  print t1_out, t2_out
+  #lista = valid_files('a',datetime(2018,3,26),path,66042)
+  #print len(lista)
