@@ -1,8 +1,9 @@
 #!/bin/bash
 
-version=2.1
-RUNPATH=/home/lmingari/lidar_v$version
-OUTPATH=/home/lmingari/salida
+version=2.2
+
+RUNPATH="$HOME/lidar_SMN"
+OUTPATH="$HOME/lidar_SMN/Output"
 
 $RUNPATH/main.py $1 > $OUTPATH/$1/last.log 2>&1
 
