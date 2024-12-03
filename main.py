@@ -8,11 +8,10 @@ from datetime  import datetime, timedelta, time
 from ConfigParser import SafeConfigParser
 from Web import WEBoutput
 
-################# Parameters ###############################################
-#cfgpath       = "/home/leonardo/Desktop/lidar_SMN/"                        # Absolute Path with cfg file
-cfgfile       = "parameters.cfg"                                           # CFG file
+################# Parameters ############################################### 
+cfgfile       = "parameters_SMN.cfg"                                           # CFG file
 t2            = datetime.utcnow().replace(second=0, microsecond=0)         # Final date and time
-t1            = (t2-timedelta(days=22)).replace(hour=0, minute=0)          # Start date and time 
+t1            = (t2-timedelta(days=160)).replace(hour=0, minute=0)          # Start date and time 
 Debug         = True
 ############################################################################
 
@@ -29,7 +28,10 @@ station_list  = ['aeroparque',
                  'tucuman',
                  'vmartelli']
 
-station_block = sys.argv[1]
+if Debug:
+  station_block = 'cordoba'
+else:
+  station_block = sys.argv[1]
 
 if station_block in station_list:
   print "Working for station {}".format(station_block)
