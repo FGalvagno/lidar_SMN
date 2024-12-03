@@ -9,7 +9,7 @@ apropiado para emplearse en una implementación operativa, tal como es nuestro p
 El método empleado está basado en los mismos principios empleados para obtener los productos operativos del National Institute for Environmental Studies, Japón. Una descripción de este método puede encontrarse en Shimizu et al. [2017]. Estos algoritmos han sido desarrollados para ser aplicados en la red de instrumentos lidares de AD-Net (Asian dust and aerosol lidar observation network) y han sido probados y validados principalmente para al caso de polvo mineral asiático. Nosotros hemos implementado estos algoritmos con el fin de aplicarlos a la red de lidares ubicados en Argentina y Chile en el marco del proyecto SAVERNet (Sistema de Gestión de Riesgos Medioambientales Atmosféricos en Sudamérica). Si bien estos productos brindan información valiosa actualmente, aún se encuentran en fase experimental y se requiere al menos un año de pruebas y validaciones con datos externos independientes para adaptarlo a las condiciones de nuestra región.
 
 ## Requisitos
-- Python 2.7 (se recomienda pyenv)
+- Python 2.7 (se recomienda [pyenv](https://github.com/pyenv/))
 - Dependencias:
   - scipy
   - numpy
