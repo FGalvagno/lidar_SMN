@@ -1,4 +1,8 @@
-# lidar-v2.1
+# lidar-v2.2
+
+## Requisitos
+- Python 2.x
+- Libraries: `ConfigParser`, `, custom modules like `ReadRaw`, `Invert532`, and `WEBoutput`.
 
 ## Lidar Products for Elastic Scattering - SAVERNet Project
 
