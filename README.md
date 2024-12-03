@@ -35,7 +35,7 @@ pip install requirements.txt
 
 ## Uso
 
-Para ejecutar la herramienta, usar:
+Para ejecutar la herramienta:
 
 ```bash
 python main.py Station
@@ -55,8 +55,9 @@ donde *Station* puede ser:
 
 Es importante definir todos los paths correctamente en el archivo de configuración:
 
+```
 parameters.cfg
-
+```
 Si se pretende realizar una ejecución automática para proveer los productos en tiempo casi real, se puede añadir la tarea:
 make_all.sh
 al Cron de Linux. Entonces puede ser necesario definir el path absoluto el programa en el encabezado del fichero:
