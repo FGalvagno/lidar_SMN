@@ -1,6 +1,5 @@
 # LiDAR-v2.2
-
-
+![savernet logo](http://www.savernet-satreps.org/images/logos/logo-savernet-neg-504x250.png)
 ## Lidar Products for Elastic Scattering - SAVERNet Project
 
 Este programa está destinado a obtener los productos de datos Lidar para los canales elásticos 1064 nm y 532 nm en sus dos componentes perpendiculares. Uno de los objetivos más importante de estos productos es caracterizar la presencia de aerosoles en la atmósfera, típicamente por medio del coeficiente de extinción o atenuación de aerosoles. No obstante, la atenuación debido a aerosoles no puede ser derivada directamente de la señal lidar de retrodispersión elástica, en tanto que es necesario asumir un valor de la razón lidar, i.e., la relación entre los coeficientes de extinción y retrodispersión de aerosoles, en los algoritmos de inversión. En consecuencia, el método utilizado aquí conduce a una importante incerteza en los productos finales. Por otro lado, la sencillez del método empleado lo hace 
@@ -78,3 +77,6 @@ $RUNPATH/main.py $1 > $OUTPATH/$1/last.log 2>&1
 
 Consultas y/o sugerencias:
 lmingari@gmail.com
+
+
+[def]: http://www.savernet-satreps.org/images/logos/logo-savernet-neg-504x250.png
