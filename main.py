@@ -7,12 +7,13 @@ from Inversion import Invert532
 from datetime  import datetime, timedelta, time
 from ConfigParser import SafeConfigParser
 from Web import WEBoutput
+from Utilities import CheckFolder
 
 ################# Parameters ############################################### 
-cfgfile       = "parameters.cfg"                                           # CFG file
+cfgfile       = "parameters_SMN.cfg"                                           # CFG file
 t2            = datetime.utcnow().replace(second=0, microsecond=0)         # Final date and time
 t1            = (t2-timedelta(days=160)).replace(hour=0, minute=0)          # Start date and time 
-Debug         = False
+Debug         = True
 ############################################################################
 
 cfgpath       = dirname(abspath(__file__))
@@ -69,6 +70,7 @@ if t2_data>t1_data:
   else:
     print "Creating a new file: ", prefix+ncfile_raw
     ReadRaw.createncd(x, y1, y2, y3, z, height, ncpath_raw+prefix+ncfile_raw)
+  CheckFolder.ensure_folder_exists("./Output/" + station_block)
   Invert532.invert(block,cfgpath)
   WEBoutput.CreateJS(block, join(ncpath_out,block), ncfile_out)
 else:
