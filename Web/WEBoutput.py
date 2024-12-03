@@ -5,8 +5,8 @@ from IOweb import lidar2js, connect_ftp, upload_file
 from os.path import isfile, join
 import jinja2
 
-fname_template_intramet = "/home/lmingari/lidar_v2.1/Web/template_intramet.html"
-fname_template_mireta   = "/home/lmingari/lidar_v2.1/Web/template_mireta.html"
+fname_template_intramet = "./Web/template_intramet.html"
+fname_template_mireta   = "./Web/template_mireta.html"
 
 st_name  = {'comodoro':   "Comodoro Rivdavia station",
             'bariloche':  "Bariloche station",
