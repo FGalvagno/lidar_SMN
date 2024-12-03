@@ -1,8 +1,5 @@
-# lidar-v2.2
+# LiDAR-v2.2
 
-## Requisitos
-- Python 2.x
-- Libraries: `ConfigParser`, `, custom modules like `ReadRaw`, `Invert532`, and `WEBoutput`.
 
 ## Lidar Products for Elastic Scattering - SAVERNet Project
 
@@ -12,22 +9,49 @@ apropiado para emplearse en una implementación operativa, tal como es nuestro p
 El métodos empleado está basado en los mismos principios empleados para obtener los productos operativos del National Institute for Environmental Studies, Japón. Una 
 descripción de este método puede encontrarse en Shimizu et al. [2017]. Estos algoritmos han sido desarrollados para ser aplicados en la red de instrumentos lidares de AD-Net (Asian dust and aerosol lidar observation network) y han sido probados y validados principalmente para al caso  de polvo mineral asiático. Nosotros hemos implementado estos algoritmos con el fin de aplicarlos a la red de lidares ubicados en Argentina y Chile en el marco del proyecto SAVERNet (Sistema de Gestión de Riesgos Medioambientales Atmosféricos en Sudamérica). Si bien estos productos brindan información valiosa actualmente, aún se encuentran en fase experimental y se requiere al menos un año de pruebas y validaciones con datos externos independientes para adaptarlo a las condiciones de nuestra región.
 
-Para ejecutarlo, usar:
+## Requisitos
+- Python 2.7 (se recomienda pyenv)
+- Dependencias:
+  - scipy
+  - numpy
+  - matplotlib
+  - netCDF4
+  - parse
+
+## Instalación
+
+Clonar el repo y navegar a la carpeta del mismo
 
 ```bash
-./main.py Station
+git clone https://github.com/FGalvagno/lidar_SMN
+cd lidar_SMN
 ```
-donde Station puede ser:
+Instalar las dependencias sugeridas
+
+```bash
+pip install requirements.txt
+```
+
+
+## Uso
+
+Para ejecutar la herramienta, usar:
+
+```bash
+python main.py Station
+```
+
+donde *Station* puede ser:
 
 | Station    |
 |------------|
-| Aeroparque |
-| Bariloche  |
-| Cordoba    |
-| Gallegos   |
-| Neuquen    |
-| Punta      |
-| Tucuman    |
+| aeroparque |
+| bariloche  |
+| cordoba    |
+| gallegos   |
+| neuquen    |
+| punta      |
+| tucuman    |
 
 Es importante definir todos los paths correctamente en el archivo de configuración:
 
