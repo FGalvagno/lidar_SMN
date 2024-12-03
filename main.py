@@ -13,7 +13,7 @@ from Utilities import CheckFolder
 cfgfile       = "parameters_SMN.cfg"                                           # CFG file
 t2            = datetime.utcnow().replace(second=0, microsecond=0)         # Final date and time
 t1            = (t2-timedelta(days=160)).replace(hour=0, minute=0)          # Start date and time 
-Debug         = True
+Debug         = False
 ############################################################################
 
 cfgpath       = dirname(abspath(__file__))
