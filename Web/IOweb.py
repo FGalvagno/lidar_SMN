@@ -1,5 +1,3 @@
-#!/usr/bin/python2
-
 import numpy as np
 from bokeh.plotting import figure, show
 from bokeh.models import (ColorBar, 
@@ -7,16 +5,16 @@ from bokeh.models import (ColorBar,
                           CustomJS,
                           DatetimeTickFormatter, 
                           FixedTicker, 
-                          FuncTickFormatter, 
                           HoverTool, 
                           Legend, 
                           LinearColorMapper, 
                           RadioButtonGroup, 
                           Toggle
                           )
+from bokeh.models.formatters import CustomJSTickFormatter
 from bokeh.resources import CDN
 from bokeh.embed import autoload_static
-from bokeh.layouts import column, row, widgetbox, Spacer
+from bokeh.layouts import column, row, Spacer
 
 from netCDF4 import Dataset, num2date
 from os.path import isfile, join
@@ -72,7 +70,7 @@ def lidar2js(path, ncfile, jsfile):
     bsc1064 = ds.variables["bsc1064"][:]
     zb      = ds.variables["zb"][:]
     zpbl    = ds.variables["zpbl"][:]
-    t       = num2date(t_raw[:], units = t_raw.units)
+    t       = num2date(t_raw[:], units = t_raw.units, only_use_cftime_datetimes=False, only_use_python_datetimes=True)
     tm      = t_raw[:]
     ds.close()
   else:
@@ -124,8 +122,8 @@ def lidar2js(path, ncfile, jsfile):
               active_inspect=None,
             #  toolbar_sticky=False,
               y_axis_label = 'Height [km]',
-              plot_width=900, 
-              plot_height=350, 
+              width=900, 
+              height=350, 
               )
   plot.toolbar.logo=None
 
@@ -135,8 +133,8 @@ def lidar2js(path, ncfile, jsfile):
   	             x_axis_label = 'Attenuated Backscatter coefficient [/sr /km]',
                  # y_axis_type="log",
                  active_inspect=None,
-                 plot_width=900, 
-                 plot_height=350
+                 width=900, 
+                 height=350
   	             )
   plot2.toolbar.logo=None
   
@@ -181,7 +179,7 @@ def lidar2js(path, ncfile, jsfile):
                        )
   color_bar.bar_line_color = "black"
   color_bar.major_tick_line_color = "black"
-  color_bar.formatter = FuncTickFormatter(code="return {}[tick].toExponential(2)".format(levs))
+  color_bar.formatter = CustomJSTickFormatter(code="return {}[tick].toExponential(2)".format(levs))
 
   legend = Legend(items=[("Cloud Base",[r1]), ("PBL Height",[r2])], 
                   location="top_left"
@@ -189,10 +187,9 @@ def lidar2js(path, ncfile, jsfile):
   legend.click_policy = "hide"
   legend.visible = False
 
-  hover = HoverTool(names=["r1","r2"])
-  hover.tooltips=[("Cloud base", "@zbase km"), 
+  hover = HoverTool(tooltips=[("Cloud base", "@zbase km"), 
                   ("PBL height", "@zpbl km"), 
-                  ("Time", "@tcenter{%d-%b-%y %H:%M}")]
+                  ("Time", "@tcenter{%d-%b-%y %H:%M}")])
   hover.formatters = { "tcenter": "datetime"}
 
   hover2 = HoverTool(tooltips=[
@@ -206,9 +203,9 @@ def lidar2js(path, ncfile, jsfile):
 
   plot2.add_tools(hover2)
   
-  plot.xaxis.formatter = DatetimeTickFormatter(months = ['%Y-%b'],
-                                               years  = ['%Y'],
-                                               days   = ['%d-%b-%Y']
+  plot.xaxis.formatter = DatetimeTickFormatter(months = '%Y-%b',
+                                               years  = '%Y',
+                                               days   = '%d-%b-%Y'
                                                )
 
   callback = CustomJS(args=dict(im=im), code="""
@@ -232,7 +229,7 @@ def lidar2js(path, ncfile, jsfile):
 
   layout = column(
   				children=[ 
-  					row(widgetbox(radio_button_group, width=200), widgetbox(toggle, width=80) ), 
+  					row(column(radio_button_group, width=200), column(toggle, width=80) ), 
   					plot,
   					Spacer(height=50),
   					# row(Spacer(width=50),plot2),
