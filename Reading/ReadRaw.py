@@ -1,5 +1,3 @@
-#!/usr/bin/python2
-
 from .LoadLicel import LoadLicel
 from netCDF4   import Dataset, num2date, date2num
 from datetime  import datetime, timedelta, time
@@ -16,9 +14,10 @@ Debug        = True
 ############################################################################
 
 def read_firstline(fname):
-  with open(fname,'r') as f:
+  with open(fname,'rb') as f:
     output = f.readline()
-  return output.strip()
+    print(output.strip().decode("ascii"))
+  return output.strip().decode("ascii")
 
 def valid_files(prefix,tdate,bpath,FileSize):
   folder = bpath + tdate.strftime("%Y%m%d/")
