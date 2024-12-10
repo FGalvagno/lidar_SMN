@@ -71,9 +71,9 @@ def depol(par, per, z):
 def power(x, filename):
   print("**** Function power ****")
   NX     = len(x)
-  c1     = np.ones_like(x, dtype=np.float)
-  c2     = np.ones_like(x, dtype=np.float)
-  c3     = np.ones_like(x, dtype=np.float)
+  c1     = np.ones_like(x, dtype=float)
+  c2     = np.ones_like(x, dtype=float)
+  c3     = np.ones_like(x, dtype=float)
   dtype1 = np.dtype([('time', 'object'), ('cvis_par', 'f8'), ('cvis_per', 'f8'), ('cir', 'f8')])
   fmt    = "%Y-%m-%d_%H:%M"
   try:
@@ -97,7 +97,7 @@ def power(x, filename):
   return c1, c2, c3
 
 def overlap(filename,z):
-  yr     = np.ones_like(z, dtype=np.float)
+  yr     = np.ones_like(z, dtype=float)
   dtype1 = np.dtype([('height', 'f8'), ('yr', 'f8')])
   if Debug:
     print("**** Function overlap ****")
