@@ -149,11 +149,12 @@ def lidar2js(path, ncfile, jsfile):
                   dh=zmax, dw=twidth, 
                   x=tmin, y=zmin
                   ) 
+  im.visible = True
 
-  #l1 = plot.line(   x='tcenter', y='zbase', source=source, line_width=2, alpha=0.8, color="black")
-  #l2 = plot.line(   x='tcenter', y='zpbl' , source=source, line_width=2, alpha=0.8, color="red")
+  line1 = plot.line(   x='tcenter', y='zbase', source=src, line_width=2, alpha=0.8, color="black")
+  line2 = plot.line(   x='tcenter', y='zpbl' , source=src, line_width=2, alpha=0.8, color="red")
 
-  r1 = plot.circle( x='tcenter', y='zbase', 
+  r1 = plot.scatter( x='tcenter', y='zbase', 
                     source=src, 
                     fill_color="black", 
                     line_color="black", 
@@ -161,15 +162,16 @@ def lidar2js(path, ncfile, jsfile):
                     size=4,
                     name="r1"
                     )
-  r2 = plot.square( x='tcenter', y='zpbl', 
+  r2 = plot.scatter( x='tcenter', y='zpbl', 
                     source=src, 
                     fill_color="red", 
                     line_color="red", 
                     fill_alpha=0.3,
                     size=4,
-                    name="r2"
+                    name="r2",
+                    marker = "square"
                     )
-  for item in [r1,r2]: item.visible = False
+  for item in [r1,r2]: item.visible = True
 
   color_bar = ColorBar(color_mapper=color_mapper, 
                        ticker=FixedTicker(ticks=[0,5,20,25]),
@@ -185,12 +187,15 @@ def lidar2js(path, ncfile, jsfile):
                   location="top_left"
                   )
   legend.click_policy = "hide"
-  legend.visible = False
+  legend.visible = True
 
-  hover = HoverTool(tooltips=[("Cloud base", "@zbase km"), 
+  hover = HoverTool(tooltips=[
+                  ("Cloud base", "@zbase km"), 
                   ("PBL height", "@zpbl km"), 
-                  ("Time", "@tcenter{%d-%b-%y %H:%M}")])
-  hover.formatters = { "tcenter": "datetime"}
+                  ("Time", "@tcenter{%d-%m-%y %H:%M}")])
+  
+  hover.formatters = { "@tcenter": "datetime"}
+  hover.point_policy = "snap_to_data"
 
   hover2 = HoverTool(tooltips=[
                      ("Signal", "@profile532"), 
