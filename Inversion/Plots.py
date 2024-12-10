@@ -4,7 +4,7 @@ matplotlib.use('Agg')
 
 import numpy as np
 import matplotlib.pyplot as plt
-import mpl_toolkits.axisartist as axisartist
+from mpl_toolkits import axisartist
 from matplotlib.dates import DayLocator, HourLocator, DateFormatter
 from matplotlib.colors import LinearSegmentedColormap,ListedColormap,BoundaryNorm
 from matplotlib.ticker import LogFormatterMathtext
@@ -109,29 +109,44 @@ def resampling(x, data, z, maxalt, maxdays):
     data_wzwx = data_wz
 
   z_wz = np.linspace(0,zmax,NZ+1)
-  x_wx = num2date([xmin + i*DX for i in range(NX+1)], units=units)
+  x_wx = num2date([xmin + i*DX for i in range(NX+1)], units=units, only_use_cftime_datetimes=False, only_use_python_datetimes=True)
 
   return x_wx, data_wzwx, z_wz
 
 def get_figure(automatic):
-  fig = plt.figure(figsize=(16,6))
-  ax  = fig.add_subplot(axisartist.Subplot(fig, "111"))
-  
-  if not automatic:
-    ax.xaxis.set_major_locator( DayLocator() )
-#    ax.xaxis.set_minor_locator( DayLocator(range(2,32,2)) )
-  ax.xaxis.set_major_formatter( DateFormatter('%d\n%b') )
-  ax.xaxis.set_minor_formatter( DateFormatter('%d') )
-  ax.autoscale_view()
-  ax.axis["bottom"].major_ticklabels.set_va('top')
-  ax.axis["bottom"].toggle(ticklabels=True)
-  ax.axis["top"].toggle(all=False) 
- 
-  ax.axis[:].major_ticks.set_tick_out(True)
-  
-  ax.fmt_xdata = DateFormatter('%Y-%m-%d %H:%M')
-  fig.autofmt_xdate()
-  return fig, ax
+    # Create a figure and standard subplot
+    fig, ax = plt.subplots(figsize=(16, 6))
+    
+    # Configure x-axis locators and formatters
+    if not automatic:
+        ax.xaxis.set_major_locator(DayLocator())
+        # Uncomment the next line to set minor locators every 2 days
+        # ax.xaxis.set_minor_locator(DayLocator(range(2, 32, 2)))
+
+    ax.xaxis.set_major_formatter(DateFormatter('%d\n%b'))
+    ax.xaxis.set_minor_formatter(DateFormatter('%d'))
+    
+    # Align tick labels above the x-axis
+    for tick in ax.get_xticklabels(which='major'):
+        tick.set_verticalalignment('top')
+    
+    # Hide the top axis and ticks
+    ax.spines['top'].set_visible(False)
+    ax.xaxis.tick_top()
+    ax.yaxis.tick_left()
+    
+    # Set tick direction to outward
+    ax.tick_params(axis='both', which='major', direction='out')
+    ax.tick_params(axis='both', which='minor', direction='out')
+
+    # Autoscale and format x-axis data for interactivity
+    ax.autoscale_view()
+    ax.fmt_xdata = DateFormatter('%Y-%m-%d %H:%M')
+    
+    # Automatically adjust x-axis label rotation
+    fig.autofmt_xdate()
+    
+    return fig, ax
   
 def show_raw(x,data,z,filename,maxalt=0.0,maxdays=0.0):
   x_low, data_low, z_low = resampling(x,data,z,maxalt,maxdays)
