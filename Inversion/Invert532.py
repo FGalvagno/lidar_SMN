@@ -9,7 +9,7 @@ from . import Classify
 import numpy as np
 from netCDF4 import Dataset, num2date
 from datetime import datetime, timedelta
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 import warnings
 import os.path
 
@@ -18,7 +18,7 @@ Debug         = True
 ############################################################################
 
 def invert(station_block, cfgfile):
-  config = SafeConfigParser()
+  config = ConfigParser(inline_comment_prefixes=";")
   config.read(cfgfile)
 
   #Read parameters from an external file (integer case)
@@ -75,7 +75,7 @@ def invert(station_block, cfgfile):
     times    = ds.variables["time"]
     day_0    = datetime(year=ds.YEAR, month=ds.MONTH, day=ds.DAY)
     height   = ds.HEIGHT
-    x        = num2date(times[:],units=times.units)
+    x        = num2date(times[:],units=times.units, only_use_cftime_datetimes=False, only_use_python_datetimes=True)
     ds.close()
   else:
     print("Unable to open file: ", ncpath_raw+station+ncfile_raw)
@@ -160,7 +160,7 @@ def invert(station_block, cfgfile):
     
   ### REBIN function: resizes a vector
   if NZ%wz==0:
-    NZ   = NZ/wz
+    NZ   = NZ//wz
     lvis = np.full((NZ,NX),np.nan)
     lir  = np.full((NZ,NX),np.nan)
     ldep = np.full((NZ,NX),np.nan)
