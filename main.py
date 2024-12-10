@@ -5,15 +5,15 @@ import sys
 from Reading import ReadRaw
 from Inversion import Invert532
 from datetime  import datetime, timedelta, time
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from Web import WEBoutput
 from Utilities import CheckFolder
 
 ################# Parameters ############################################### 
 cfgfile       = "parameters_SMN.cfg"                                           # CFG file
 t2            = datetime.utcnow().replace(second=0, microsecond=0)         # Final date and time
-t1            = (t2-timedelta(days=160)).replace(hour=0, minute=0)          # Start date and time 
-Debug         = False
+t1            = (t2-timedelta(days=180)).replace(hour=0, minute=0)          # Start date and time 
+Debug         = True
 ############################################################################
 
 cfgpath       = dirname(abspath(__file__))
@@ -42,7 +42,7 @@ else:
   for item in station_list: print(item)
   exit()
 
-config = SafeConfigParser()
+config = ConfigParser(inline_comment_prefixes=";")
 config.read(cfgpath)
 
 #Read parameters from an external file
@@ -64,6 +64,7 @@ t1_data, t2_data = ReadRaw.findtimes(t1,t2,sampling,binpath,prefix,ncpath_raw+pr
 print("Time range found: {}-{}".format(t1_data, t2_data))
 if t2_data>t1_data:
   x, y1, y2, y3, z, height = ReadRaw.get_data(t1_data,t2_data,sampling,binpath,prefix,FileSize)
+  
   if isfile(ncpath_raw+prefix+ncfile_raw):
     print("Updating file: ", prefix+ncfile_raw)
     ReadRaw.updatencd(x, y1, y2, y3, z, ncpath_raw+prefix+ncfile_raw)
