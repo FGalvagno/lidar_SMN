@@ -40,8 +40,8 @@ def generate_qda_advanced_plot():
         labels[i + len(labels_ash)] = labels_cloud[i]
         x[i + len(labels_ash), 0] = x_cloud[i]
         x[i + len(labels_ash), 1] = y_cloud[i]
-    print("X: ", x)
-    print("Labels: ", labels)
+    print(("X: ", x))
+    print(("Labels: ", labels))
     disc = QuadraticDiscriminantAnalysis()
     disc.fit(x, labels)
     # Grafica.

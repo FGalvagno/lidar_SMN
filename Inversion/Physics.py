@@ -56,7 +56,7 @@ def fernald(x, z, alpha_r, beta_r, s1, top, init_beta):
   beta[iz_top-1]  = init_beta
   alpha[iz_top-1] = init_beta * s1
 
-  for iz in reversed(range(1,iz_top)):
+  for iz in reversed(list(range(1,iz_top))):
     a = (s1-s2)*(beta_r[iz-1]+beta_r[iz])*DZ
     num = x[iz-1] * np.exp(a)
     den = x[iz]/(beta[iz]+beta_r[iz]) 
@@ -72,5 +72,5 @@ def fernald(x, z, alpha_r, beta_r, s1, top, init_beta):
 if __name__ == "__main__":
   z = np.array([0, 100, 2000, 5500])
   a,b = rayleigh(z, 1064.0, 0.0)
-  print a
-  print b
+  print(a)
+  print(b)

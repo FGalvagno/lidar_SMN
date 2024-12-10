@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-    
 
-from IOweb import lidar2js, connect_ftp, upload_file
+from .IOweb import lidar2js, connect_ftp, upload_file
 from os.path import isfile, join
 import jinja2
 

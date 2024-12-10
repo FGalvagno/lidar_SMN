@@ -41,7 +41,7 @@ def resampling(x, data, z, zmax):
     if NZ0<NZ: NZ=NZ0
   
   N  = NX*NZ
-  if Debug: print "Original data: {} points".format(N)
+  if Debug: print("Original data: {} points".format(N))
   wz = 1
   wx = 1
   while N>NMAX:
@@ -60,7 +60,7 @@ def resampling(x, data, z, zmax):
   xm   = xm[:NX]
   
   if wz>1:
-    if Debug: print "Using vertical rebin with wz={}".format(wz)
+    if Debug: print("Using vertical rebin with wz={}".format(wz))
     NZ = NZ/wz
     data_wz = np.full((NZ,NX),np.nan)
     z_wz    = np.mean(z.reshape(-1, wz), axis=1)
@@ -72,7 +72,7 @@ def resampling(x, data, z, zmax):
     z_wz    = z
 
   if wx>1:
-    if Debug: print "Using horizontal rebin with wx={}".format(wx)
+    if Debug: print("Using horizontal rebin with wx={}".format(wx))
     NX = NX/wx
     data_wzwx = np.full((NZ,NX),np.nan)
     xm_wx     = np.mean(xm.reshape(-1, wx), axis=1)

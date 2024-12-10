@@ -49,7 +49,7 @@ class Channel(object):
     self.Shots            = s[10]
     if self.Shots==0:
       self.Shots=301
-      if Debug: print "Assuming {} shots".format(self.Shots)
+      if Debug: print("Assuming {} shots".format(self.Shots))
     if self.isPhotonCounting=='p': 
       self.Scale          = s[11]
     else: 
@@ -135,7 +135,7 @@ class LoadLicel(object):
           else:
             offset += 4*item.Bins + 2
     except IOError as e:
-      print "I/O error({0}): {1}".format(e.errno, e.strerror)
+      print("I/O error({0}): {1}".format(e.errno, e.strerror))
 
 def load355(fname):
   try:
@@ -143,7 +143,7 @@ def load355(fname):
       file.seek(20)
       return np.fromfile(file,dtype="<u4")
   except IOError as e:
-    print "I/O error({0}): {1}".format(e.errno, e.strerror)
+    print("I/O error({0}): {1}".format(e.errno, e.strerror))
     return False
 
 if __name__ == "__main__":
@@ -157,11 +157,11 @@ if __name__ == "__main__":
 
   z  = a.channel["1064oo"].Range
   y =[]
-  for item in a.channel.keys(): 
-    print item
+  for item in list(a.channel.keys()): 
+    print(item)
     ax.semilogx(z,a.channel[item].Signal,label=item)
-  print a.GlobalP.HeightASL
-  print a(0)
+  print(a.GlobalP.HeightASL)
+  print(a(0))
 
   #ax.set_ylim([3.65E6,3.69E6])
   #ax.legend()

@@ -1,15 +1,15 @@
 #!/usr/bin/python2
 
-import Calibration
-import CloudDetect
-import Physics
-import Plots
-import InOut
-import Classify
+from . import Calibration
+from . import CloudDetect
+from . import Physics
+from . import Plots
+from . import InOut
+from . import Classify
 import numpy as np
 from netCDF4 import Dataset, num2date
 from datetime import datetime, timedelta
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 import warnings
 import os.path
 
@@ -65,7 +65,7 @@ def invert(station_block, cfgfile):
   NCDmonth   = config.getboolean("Output", "NCDmonth")
 
   if os.path.isfile(ncpath_raw+station+ncfile_raw):
-    print "Opening file: ", ncpath_raw+station+ncfile_raw
+    print("Opening file: ", ncpath_raw+station+ncfile_raw)
     ### Read Time, Data (mV), Heigth (km)
     ds       = Dataset(ncpath_raw+station+ncfile_raw)
     ch1      = ds.variables["ch1"][:]
@@ -78,7 +78,7 @@ def invert(station_block, cfgfile):
     x        = num2date(times[:],units=times.units)
     ds.close()
   else:
-    print "Unable to open file: ", ncpath_raw+station+ncfile_raw
+    print("Unable to open file: ", ncpath_raw+station+ncfile_raw)
     exit()
     
   ch1      = ch1.T
@@ -109,12 +109,12 @@ def invert(station_block, cfgfile):
       ch3[:,it] = np.convolve(ch3[:,it],np.ones(wsmooth)/wsmooth,mode='same')
 
   if Debug:
-    print "Max Value for channel 1: {} mV km2".format(np.nanmax(ch1))
-    print "Max Value for channel 2: {} mV km2".format(np.nanmax(ch2))
-    print "Max Value for channel 3: {} mV km2".format(np.nanmax(ch3))
+    print("Max Value for channel 1: {} mV km2".format(np.nanmax(ch1)))
+    print("Max Value for channel 2: {} mV km2".format(np.nanmax(ch2)))
+    print("Max Value for channel 3: {} mV km2".format(np.nanmax(ch3)))
 
   ### Power Correction
-  if Debug: print "Performing power corrections..."
+  if Debug: print("Performing power corrections...")
   c1, c2, c3 = Calibration.power(x,ncpath_out+power_file)
   for ix in range(NX):
     ch1[:,ix] = ch1[:,ix] * c1[ix]
@@ -135,12 +135,12 @@ def invert(station_block, cfgfile):
     dep  = np.where(para == 0, np.nan, perp / para)  # Volume linear depolarization ratio
 
   if PlotRaw:
-    print "Plotting raw data..."
+    print("Plotting raw data...")
     Plots.show_raw(x,intvis,z, ncpath_out+"raw_vis.png", zmax=16)
     Plots.show_raw(x,intir, z, ncpath_out+"raw_ir.png", zmax=16)
 
   ### Overlap Correction
-  if Debug: print "Performing overlap corrections..."
+  if Debug: print("Performing overlap corrections...")
   yrvis = Calibration.overlap(ncpath_out + yrfile_vis,z)
   yrir  = Calibration.overlap(ncpath_out + yrfile_ir,z)
   for ix in range(NX):
@@ -153,10 +153,10 @@ def invert(station_block, cfgfile):
   color_r = Calibration.color_ratio(intvis, intir, z, maxint)
   intir   = intir / color_r       # Attenuated Backscatter Coefficient at 1064 nm
   if Debug: 
-    print "Calibration factor - Visible channel: {}".format(factor)
-    print "Calibration factor - IR channel: {}".format(1.0/color_r)
-    print "Vis. channel: min={}, max={}".format(np.nanmin(intvis), np.nanmax(intvis))
-    print "IR channel: min={}, max={}".format(np.nanmin(intir), np.nanmax(intir))
+    print("Calibration factor - Visible channel: {}".format(factor))
+    print("Calibration factor - IR channel: {}".format(1.0/color_r))
+    print("Vis. channel: min={}, max={}".format(np.nanmin(intvis), np.nanmax(intvis)))
+    print("IR channel: min={}, max={}".format(np.nanmin(intir), np.nanmax(intir)))
     
   ### REBIN function: resizes a vector
   if NZ%wz==0:
@@ -176,7 +176,7 @@ def invert(station_block, cfgfile):
           lvis[:,it] = np.nanmean(intvis[:,it].reshape(-1, wz), axis=1)
           lir[:,it]  = np.nanmean(intir[:,it].reshape(-1, wz), axis=1)
           ldep[:,it] = np.nanmean(dep[:,it].reshape(-1, wz), axis=1)
-    if Debug: print "REBIN successful. Vertical resolution: {} m".format(1000*DZ)
+    if Debug: print("REBIN successful. Vertical resolution: {} m".format(1000*DZ))
   else:
     raise SystemExit("STOP: Rebin not performed: verify your configuration")
     
@@ -188,7 +188,7 @@ def invert(station_block, cfgfile):
   rf, pbl, invtop = CloudDetect.phenomena(lvis,lir,ldep,lz,zb,rth1,rth4,pblth,snrth)
 
   if PlotCal:
-    print "Plotting calibrated signal..."
+    print("Plotting calibrated signal...")
     Plots.show_cal(x,intvis,z,zb,zt,ncpath_out+"cal_vis.png")
     Plots.show_cal(x,intir,z,zb,zt,ncpath_out+"cal_ir.png")
     #Plots.show_cal(x,intvis,z,pbl,invtop,ncpath_out+"cloud_vis.png")
@@ -260,7 +260,7 @@ def invert(station_block, cfgfile):
   else: 
     ext_int_r = 1e11
     
-  if Debug: print "Calibration constant: {}".format(ext_int_r)
+  if Debug: print("Calibration constant: {}".format(ext_int_r))
 
   ### Use the Fernald's algorithm - Low clouds case
   for ix in range(NX):
@@ -277,7 +277,7 @@ def invert(station_block, cfgfile):
     else: 
       bsc_ini = profile_vis[iz_inv] / ext_int_r * 0.8 * np.exp(invtop[ix]/4.5) - beta_m[iz_inv]
     if bsc_ini<0:
-      if Debug: print "Changing boundary condition bsc_ini = {}".format(bsc_ini)
+      if Debug: print("Changing boundary condition bsc_ini = {}".format(bsc_ini))
       bsc_ini = beta_m[iz_inv-1] * 1E-4
     alpha, beta = Physics.fernald(profile_vis, lz, alpha_m, beta_m, s1, invtop[ix], bsc_ini)
     ###
@@ -303,10 +303,10 @@ def invert(station_block, cfgfile):
   sphere  = ext_vis * (1.0-dr)
   bsc     = ext_vis / s1
 
-  if Debug: print "Max. Att. Backscatter: {}".format(np.nanmax(absc532))
+  if Debug: print("Max. Att. Backscatter: {}".format(np.nanmax(absc532)))
 
   if PlotBeta:
-    print "Plotting attenuated backscatter coefficients..."
+    print("Plotting attenuated backscatter coefficients...")
     Plots.show_beta(x,1000.0*absc532,lz,
                     fname=ncpath_out+'absc_vis.png',
                     label="Attenuated Backscatter coefficient at 532 nm",
@@ -321,18 +321,18 @@ def invert(station_block, cfgfile):
                     )
 
   if PlotAlpha:
-    print "Plotting extinction coefficients..."
+    print("Plotting extinction coefficients...")
     Plots.show_alpha(x,1000.0*dust,lz,zb,zt,invtop,ncpath_out+'dust.png',     maxalt=9, maxdays=7)
     Plots.show_alpha(x,1000.0*sphere,lz,zb,zt,invtop,ncpath_out+'sphere.png', maxalt=9, maxdays=7)
 
   if PlotDep:
-    print "Plotting depolarization ratio..."
+    print("Plotting depolarization ratio...")
     with np.errstate(invalid='ignore'):
       ldep[absc532<1E-7]=np.nan
     Plots.show_dep(x,ldep,lz,ncpath_out+'dep.png',maxalt=18)
     
   if AshOut:
-    print "Ash detection..."
+    print("Ash detection...")
     if os.path.isfile(ncpath_raw+"disc.pickle"):
       NZ1                = iz_18km+1
       absc532_sub        = 1000.0*(absc532[:NZ1,:]).T
@@ -340,21 +340,21 @@ def invert(station_block, cfgfile):
       lz_sub             = lz[:NZ1]
       mask_tomoaki       = Classify.classify_tomoaki(absc1064_sub, lz_sub, NX, NZ1, height)
       ash_mask, ash_conc = Classify.get_ash_concentration(NX, NZ1, absc1064_sub, absc532_sub, mask_tomoaki, ncpath_raw+"disc.pickle")
-      print "Plotting ash concentration..."
+      print("Plotting ash concentration...")
       Plots.show_ash(x,ash_conc,lz_sub,ncpath_out+'ash.png')
-      print "Plotting classes..."
+      print("Plotting classes...")
       Plots.show_mask(x,mask_tomoaki,lz_sub,ncpath_out+'classes.png')
     else:
-      print "Unable to open file: ", ncpath_raw+"disc.pickle"
+      print("Unable to open file: ", ncpath_raw+"disc.pickle")
 
   if NCDout:
-    print "Creating NetCDF file: {}".format(ncpath_out+ncfile_out)
+    print("Creating NetCDF file: {}".format(ncpath_out+ncfile_out))
     NZ1 = iz_18km+1
     NZ2 = iz_9km+1
     InOut.save_ncd(ncpath_out+ncfile_out, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, pbl, invtop, NZ1, NZ2)
     
   if NCDmonth:
-    print "Creating monthly NetCDF files"
+    print("Creating monthly NetCDF files")
     NZ1 = iz_18km+1
     NZ2 = iz_9km+1
     InOut.monthly_ncd(ncpath_out, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, invtop, NZ1, NZ2)

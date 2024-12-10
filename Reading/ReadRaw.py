@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 
-from LoadLicel import LoadLicel
+from .LoadLicel import LoadLicel
 from netCDF4   import Dataset, num2date, date2num
 from datetime  import datetime, timedelta, time
 import numpy as np
@@ -30,7 +30,7 @@ def valid_files(prefix,tdate,bpath,FileSize):
   verify_file = lambda x: verify_name(x) and verify_size(x) and verify_head(x)
   
   filelist_folder = [f for f in os.listdir(folder) if isfile(join(folder, f))]
-  filelist_folder = filter(verify_file, filelist_folder)
+  filelist_folder = list(filter(verify_file, filelist_folder))
   filelist_folder.sort()
   return filelist_folder
 
@@ -39,15 +39,15 @@ def parse_datetime(st):
   return datetime.strptime(date_st, fmt)
 
 def findtimes(t1,t2,sampling,bpath,prefix,ncfile,FileSize):
-  print "File checking assuming size: {} B".format(FileSize)
+  print("File checking assuming size: {} B".format(FileSize))
   if isfile(ncfile):
-    if Debug: print "Found file: ", ncfile
+    if Debug: print("Found file: ", ncfile)
     ncfile = Dataset(ncfile,'r',format="NETCDF3_CLASSIC") 
     t      = ncfile.variables["time"]
     t1_raw = num2date(t[-1], units = t.units)
     ncfile.close()
   else:
-    if Debug: print "Not found file: ", ncfile
+    if Debug: print("Not found file: ", ncfile)
     td = t1.date()
     SearchFile = True
     while td<=t2.date() and SearchFile:
@@ -104,7 +104,7 @@ def get_data(t1,t2,sampling,path,prefix,FileSize):
     if os.path.exists(path + folder):
       filelist_folder = valid_files(prefix,td,path,FileSize)
       if filelist_folder:
-        if Debug: print "Reading folder: ", folder
+        if Debug: print("Reading folder: ", folder)
         for file_item in filelist_folder:
           file_date = parse_datetime(file_item)
           i_time    = int((file_date-t1).total_seconds()//(60.0*sampling))
@@ -139,8 +139,8 @@ def get_data(t1,t2,sampling,path,prefix,FileSize):
 def createncd(x, data1, data2, data3, z, height, ncfilename):
   NT = len(x)
   NZ = len(z)
-  print "**********************"
-  print "Creating file: {}".format(ncfilename)
+  print("**********************")
+  print("Creating file: {}".format(ncfilename))
   #Dimensions
   ncfile = Dataset(ncfilename,'w',format="NETCDF3_CLASSIC") 
   ncfile.createDimension("time", None)
@@ -184,14 +184,14 @@ def createncd(x, data1, data2, data3, z, height, ncfilename):
   ncfile.HEIGHT = height
 
   ncfile.close()
-  print "Done!"
-  print "**********************"
+  print("Done!")
+  print("**********************")
   
 def updatencd(x, data1, data2, data3, z, ncfilename):
   NT = len(x)
   NZ = len(z)
-  print "**********************"
-  print "Updating file: {}".format(ncfilename)
+  print("**********************")
+  print("Updating file: {}".format(ncfilename))
   ncfile = Dataset(ncfilename,'a',format="NETCDF3_CLASSIC") 
   #Dimensions
   NT_file = len(ncfile.dimensions["time"])
@@ -211,11 +211,11 @@ def updatencd(x, data1, data2, data3, z, ncfilename):
       ch2[NT_file+it-1,:] = data2[it,:]
       ch3[NT_file+it-1,:] = data3[it,:]
   else:
-    print "Error: File is not consistent with input data"
+    print("Error: File is not consistent with input data")
 
   ncfile.close()
-  print "Done!"
-  print "**********************"
+  print("Done!")
+  print("**********************")
 
 if __name__ == "__main__":
   FileSize = 66042
@@ -226,6 +226,6 @@ if __name__ == "__main__":
   t1       = datetime(2019,3,20,11,0)
   t2       = datetime(2019,3,24,23,46)
   t1_out, t2_out = findtimes(t1,t2,sampling,path,prefix,ncfile,FileSize)
-  print t1_out, t2_out
+  print(t1_out, t2_out)
   #lista = valid_files('a',datetime(2018,3,26),path,66042)
   #print len(lista)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import numpy as np
-import Plots
+from . import Plots
 from datetime import datetime
 
 ################# Parameters ####################
@@ -21,9 +21,9 @@ def vis_factor(vis,z):
   maxsub          = np.nanargmax(hist)
   factor          = 1E4 / 10.**(bin_edges[maxsub])
   if Debug: 
-    print "**** Function vis_factor ****"
-    print "Index of maximum in histogram: {}".format(maxsub)
-    print "Maximum histogram: {}".format(bin_edges[maxsub])
+    print("**** Function vis_factor ****")
+    print("Index of maximum in histogram: {}".format(maxsub))
+    print("Maximum histogram: {}".format(bin_edges[maxsub]))
   if DoPlot: Plots.histo(hist, bin_edges)
   return factor
   
@@ -46,9 +46,9 @@ def color_ratio(vis, ir, z, maxint):
     params = np.polyfit(x,y,1)
     output = params[0]
     if Debug: 
-      print "**** Function color_ratio ****"
-      print "Number of Cloud points: {} - Color Ratio: {}".format(cl, output)
-      print "Plotting channel relation..."
+      print("**** Function color_ratio ****")
+      print("Number of Cloud points: {} - Color Ratio: {}".format(cl, output))
+      print("Plotting channel relation...")
     if DoPlot: Plots.xy(x, y, params, "calibration.png")
   return output
   
@@ -63,13 +63,13 @@ def depol(par, per, z):
   params = np.polyfit(x[~np.isnan(x)],y[~np.isnan(x)],1)
   output = params[0]
   if Debug: 
-    print "**** Function depol ****"
-    print "Linear fit: slope={}".format(output)
+    print("**** Function depol ****")
+    print("Linear fit: slope={}".format(output))
   if DoPlot: Plots.xy(x, y, params, "depol.png")
   return output
   
 def power(x, filename):
-  print "**** Function power ****"
+  print("**** Function power ****")
   NX     = len(x)
   c1     = np.ones_like(x, dtype=np.float)
   c2     = np.ones_like(x, dtype=np.float)
@@ -85,33 +85,33 @@ def power(x, filename):
         break
       else:
         if Debug: 
-          print "Applying power correction for ", item["time"]
-          print "cvis_par={} - cvis_per={} - cir={}".format(item['cvis_par'],item['cvis_per'],item['cir'])
+          print("Applying power correction for ", item["time"])
+          print("cvis_par={} - cvis_per={} - cir={}".format(item['cvis_par'],item['cvis_per'],item['cir']))
         for ix in range(NX):
           if item['time']<x[ix]:
             c1[ix] = c1[ix] * item['cvis_par']
             c2[ix] = c2[ix] * item['cvis_per']
             c3[ix] = c3[ix] * item['cir']
   except IOError:
-    if Debug: print "Power file not found: {}".format(filename)
+    if Debug: print("Power file not found: {}".format(filename))
   return c1, c2, c3
 
 def overlap(filename,z):
   yr     = np.ones_like(z, dtype=np.float)
   dtype1 = np.dtype([('height', 'f8'), ('yr', 'f8')])
   if Debug:
-    print "**** Function overlap ****"
-    print "Overlap File: {}".format(filename)
-    print "Checking file consistence..."
+    print("**** Function overlap ****")
+    print("Overlap File: {}".format(filename))
+    print("Checking file consistence...")
   try:
     data   = np.loadtxt(filename, dtype=dtype1)
     if len(data)==len(z):
-      if Debug: print "OK"
+      if Debug: print("OK")
       for i in range(len(data)): yr[i]=data['yr'][i]
     else:
-      if Debug: print "Incorrect number of levels"
+      if Debug: print("Incorrect number of levels")
   except IOError:
-    if Debug: print "Overlap File not found"
+    if Debug: print("Overlap File not found")
   return yr
 
 if __name__ == "__main__":
@@ -120,4 +120,4 @@ if __name__ == "__main__":
 #  print histo_param(vis.T,z)
   filename = "YR.txt"
   yr = overlap(filename,z)
-  print 1.0 / yr
+  print(1.0 / yr)

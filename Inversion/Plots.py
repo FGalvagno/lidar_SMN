@@ -67,7 +67,7 @@ def resampling(x, data, z, maxalt, maxdays):
     if NX0<NX: NX=NX0
   
   N  = NX*NZ
-  if Debug: print "Original data: {} points".format(N)
+  if Debug: print("Original data: {} points".format(N))
   wz = 1
   wx = 1
   while N>NMAX:
@@ -87,7 +87,7 @@ def resampling(x, data, z, maxalt, maxdays):
   xmin = xm[-NX]
   
   if wz>1:
-    if Debug: print "Using vertical rebin with wz={}".format(wz)
+    if Debug: print("Using vertical rebin with wz={}".format(wz))
     NZ = NZ/wz
     data_wz = np.full((NZ,NX),np.nan)
     for it in range(NX):
@@ -97,7 +97,7 @@ def resampling(x, data, z, maxalt, maxdays):
     data_wz = np.copy(data)
 
   if wx>1:
-    if Debug: print "Using horizontal rebin with wx={}".format(wx)
+    if Debug: print("Using horizontal rebin with wx={}".format(wx))
     NX = NX/wx
     data_wzwx = np.full((NZ,NX),np.nan)
     with warnings.catch_warnings():

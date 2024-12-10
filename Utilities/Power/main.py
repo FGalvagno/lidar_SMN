@@ -3,7 +3,7 @@
 import numpy as np
 from netCDF4 import Dataset, num2date
 from datetime import datetime, timedelta
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 import Plots
 
 ################# Parameters ###############################################
@@ -55,12 +55,12 @@ for it in range(NX):
   ch3[:,it] = (ch3[:,it] - pol(z))*z**2
 
 if Debug:
-  print "Max Value for channel 1: {} mV km2".format(np.nanmax(ch1))
-  print "Max Value for channel 2: {} mV km2".format(np.nanmax(ch2))
-  print "Max Value for channel 3: {} mV km2".format(np.nanmax(ch3))
+  print("Max Value for channel 1: {} mV km2".format(np.nanmax(ch1)))
+  print("Max Value for channel 2: {} mV km2".format(np.nanmax(ch2)))
+  print("Max Value for channel 3: {} mV km2".format(np.nanmax(ch3)))
 
 def power(x, filename):
-  print "**** Function power ****"
+  print("**** Function power ****")
   c1     = np.ones_like(x, dtype=np.float)
   c2     = np.ones_like(x, dtype=np.float)
   c3     = np.ones_like(x, dtype=np.float)
@@ -75,15 +75,15 @@ def power(x, filename):
         break
       else:
         if Debug: 
-          print "Applying power correction for ", item["time"]
-          print "cvis_par={} - cvis_per={} - cir={}".format(item['cvis_par'],item['cvis_per'],item['cir'])
+          print("Applying power correction for ", item["time"])
+          print("cvis_par={} - cvis_per={} - cir={}".format(item['cvis_par'],item['cvis_per'],item['cir']))
         for ix in range(NX):
           if item['time']<x[ix]:
             c1[ix] = c1[ix] * item['cvis_par']
             c2[ix] = c2[ix] * item['cvis_per']
             c3[ix] = c3[ix] * item['cir']
   except IOError:
-    if Debug: print "Power file not found: {}".format(filename)
+    if Debug: print("Power file not found: {}".format(filename))
   return c1, c2, c3
   
 #Plots.show_raw(x,ch3,z,zmax=18.,vmax=1.)

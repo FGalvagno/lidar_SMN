@@ -7,7 +7,7 @@ import numpy as np
 from Plots import show_raw
 from Overlap import SelectPoint
 from netCDF4 import Dataset, num2date
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from datetime import datetime
 from os.path import isfile, join, dirname, abspath
 import sys
@@ -47,7 +47,7 @@ else:
   yrfile = config.get("Paths", "yrfile_vis")
 
 if isfile(ncfile_raw):
-	if Debug: print "Opening file: ", ncfile_raw
+	if Debug: print("Opening file: ", ncfile_raw)
 	### Read Time, Data (mV), Heigth (km)
 	ds       = Dataset(ncfile_raw)
 	data     = ds.variables[varname][:]
@@ -56,7 +56,7 @@ if isfile(ncfile_raw):
 	x        = num2date(times[:],units=times.units)
 	ds.close()
 else:
-	print "Unable to open file: ", ncfile_raw
+	print("Unable to open file: ", ncfile_raw)
 	sys.exit()
 
 data = data.T 
@@ -65,21 +65,21 @@ data = data.T
 NX = len(x)
 NZ = len(z)
 
-print "Time range in data: {} to {}".format(x[0],x[-1])
-print "Time range required: {} to {}".format(t1,t2)
+print("Time range in data: {} to {}".format(x[0],x[-1]))
+print("Time range required: {} to {}".format(t1,t2))
 if t1>t2:
-	print "Swaping datetime range"
+	print("Swaping datetime range")
 	t1, t2 = t2, t1
 n1,n2 = np.searchsorted(x,[t1,t2])
 if n1==NX:
-	print "Please, redefine lower boundary in time range"
+	print("Please, redefine lower boundary in time range")
 	sys.exit()
 elif n2==0:
-	print "Please, redefine higher boundary in time range"
+	print("Please, redefine higher boundary in time range")
 	sys.exit()
 else:
 	n2 -= 1
-print "Time range used: {} to {}".format(x[n1],x[n2])
+print("Time range used: {} to {}".format(x[n1],x[n2]))
 
 fig, axarr = plt.subplots(2)
 #
@@ -111,7 +111,7 @@ else:
 
 ### Smoothing
 if Smooth:
-  print "Performing smoothing with parameter wsmooth:{}".format(wsmooth)
+  print("Performing smoothing with parameter wsmooth:{}".format(wsmooth))
   for it in range(NX):
     data[:,it] = np.convolve(data[:,it],np.ones(wsmooth)/wsmooth,mode='same')
     
@@ -121,7 +121,7 @@ if Plot:
 #Plot RCLS data
 axarr[1].plot(data[:,n1:n2],z,'-')
 
-if Debug: print "Output file: ", yrfile
+if Debug: print("Output file: ", yrfile)
 
 dr = SelectPoint(data[:,n1:n2],z,yrfile)
 

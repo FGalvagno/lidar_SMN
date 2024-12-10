@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import scipy.integrate as integrate
-import Physics
+from . import Physics
 import pickle
 
 """
@@ -34,7 +34,7 @@ UNKNOWN2       = 9 # REVISAR!!!!
 
 
 def classify_tomoaki(absc1064, alt, NT, NZ1, stationHeight):
-    print("Altura de estacion: ", stationHeight)
+    print(("Altura de estacion: ", stationHeight))
     # Levantamos absc.
     #plt.plot(np.log(np.abs(absc1064[:,0])), range(NZ1), 'r')
     #plt.show()
@@ -56,7 +56,7 @@ def classify_tomoaki(absc1064, alt, NT, NZ1, stationHeight):
     #
     for indexT in range(0, NT):
         if indexT % 50 == 0:
-          print("INdex T: ", indexT)
+          print(("INdex T: ", indexT))
         # ACA SE DEBE HACER EL ALGORITMO DE NISHIZAWA.
         lower = NZ1 - 50
         upper = NZ1

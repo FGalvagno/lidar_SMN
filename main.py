@@ -5,7 +5,7 @@ import sys
 from Reading import ReadRaw
 from Inversion import Invert532
 from datetime  import datetime, timedelta, time
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from Web import WEBoutput
 from Utilities import CheckFolder
 
@@ -35,11 +35,11 @@ else:
   station_block = sys.argv[1]
 
 if station_block in station_list:
-  print "Working for station {}".format(station_block)
+  print("Working for station {}".format(station_block))
 else:
-  print "{} is not a valid station".format(station_block)
-  print "Posible options:"
-  for item in station_list: print item
+  print("{} is not a valid station".format(station_block))
+  print("Posible options:")
+  for item in station_list: print(item)
   exit()
 
 config = SafeConfigParser()
@@ -57,25 +57,25 @@ ncfile_raw = config.get("Paths", "ncfile_raw")
 binpath    = config.get("Paths", "binpath")
 binpath    = binpath + station_block + "/"
 
-print "Reading binary data from LICEL from {} to {}".format(t1,t2)
-print "Looking for binary raw data in {}".format(binpath)
-print "Output file (NetCDF format): {}".format(prefix+ncfile_raw)
+print("Reading binary data from LICEL from {} to {}".format(t1,t2))
+print("Looking for binary raw data in {}".format(binpath))
+print("Output file (NetCDF format): {}".format(prefix+ncfile_raw))
 t1_data, t2_data = ReadRaw.findtimes(t1,t2,sampling,binpath,prefix,ncpath_raw+prefix+ncfile_raw,FileSize)
-print "Time range found: {}-{}".format(t1_data, t2_data)
+print("Time range found: {}-{}".format(t1_data, t2_data))
 if t2_data>t1_data:
   x, y1, y2, y3, z, height = ReadRaw.get_data(t1_data,t2_data,sampling,binpath,prefix,FileSize)
   if isfile(ncpath_raw+prefix+ncfile_raw):
-    print "Updating file: ", prefix+ncfile_raw
+    print("Updating file: ", prefix+ncfile_raw)
     ReadRaw.updatencd(x, y1, y2, y3, z, ncpath_raw+prefix+ncfile_raw)
   else:
-    print "Creating a new file: ", prefix+ncfile_raw
+    print("Creating a new file: ", prefix+ncfile_raw)
     ReadRaw.createncd(x, y1, y2, y3, z, height, ncpath_raw+prefix+ncfile_raw)
   CheckFolder.ensure_folder_exists("./Output/" + station_block)
   Invert532.invert(block,cfgpath)
   WEBoutput.CreateJS(block, join(ncpath_out,block), ncfile_out)
 else:
-  print "Nothing to do"
-  print "Waiting for new data"
-print "******** Done ! **********"
+  print("Nothing to do")
+  print("Waiting for new data")
+print("******** Done ! **********")
 
 

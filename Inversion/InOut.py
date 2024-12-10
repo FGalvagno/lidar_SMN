@@ -11,8 +11,8 @@ Debug    = True
 
 def save_ncd(filename, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, zpbl, invtop, NZ1, NZ2):
   if Debug:
-    print "**********************"
-    print "Creating output file: {}".format(filename)
+    print("**********************")
+    print("Creating output file: {}".format(filename))
   ### Dimensions
   ncfile = Dataset(filename,'w',format="NETCDF3_CLASSIC") 
   ncfile.createDimension("time", None)
@@ -92,12 +92,12 @@ def save_ncd(filename, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb
   ncfile.STATION = station
 
   ncfile.close()
-  if Debug: print "Done!"
+  if Debug: print("Done!")
     
 def update_ncd(filename, x, absc532, absc1064, ldep, dust, sphere, zb, zt, invtop, NZ1, NZ2):
   if Debug:
-    print "**********************"
-    print "Updating file: {}".format(filename)
+    print("**********************")
+    print("Updating file: {}".format(filename))
   NT = len(x)
   ncfile = Dataset(filename,'a',format="NETCDF3_CLASSIC") 
   #Dimensions
@@ -116,7 +116,7 @@ def update_ncd(filename, x, absc532, absc1064, ldep, dust, sphere, zb, zt, invto
   v7    = ncfile.variables["zt"]
   v8    = ncfile.variables["zinv"]
   
-  print NZ1_file, NZ2_file
+  print(NZ1_file, NZ2_file)
 
   #Check file consistence  
   if x[0]==t_end and NZ1==NZ1_file and NZ2==NZ2_file:
@@ -131,13 +131,13 @@ def update_ncd(filename, x, absc532, absc1064, ldep, dust, sphere, zb, zt, invto
       v7[NT_file+it-1]   = zt[it]
       v8[NT_file+it-1]   = invtop[it]
   else:
-    print "Error: File is not consistent with input data"
+    print("Error: File is not consistent with input data")
 
   ncfile.close()
-  if Debug: print "Done!"
+  if Debug: print("Done!")
     
 def monthly_ncd(path, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb, zt, invtop, NZ1, NZ2):
-  if Debug: print "**** Function monthly_ncd ****"
+  if Debug: print("**** Function monthly_ncd ****")
   NX = len(x)
   i1 = NX
   fname = ""
@@ -175,13 +175,13 @@ def monthly_ncd(path, station, x, lz, absc532, absc1064, ldep, dust, sphere, zb,
             
       #Inquiry information on fname_new
       if os.path.isfile(path+fname_new):
-        if Debug: print "Found file: ", fname_new
+        if Debug: print("Found file: ", fname_new)
         ncfile = Dataset(path+fname_new,'r',format="NETCDF3_CLASSIC") 
         t      = ncfile.variables["time"]
         x_in   = num2date(t[-1], units = t.units)
         ncfile.close()
       else:
-        if Debug: print "Not found file: ", fname_new
+        if Debug: print("Not found file: ", fname_new)
         x_in = x[ix]
       i1 = ix
       fname = fname_new

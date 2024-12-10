@@ -64,7 +64,7 @@ def lidar2js(path, ncfile, jsfile):
   fname_nc  = join(path,ncfile)
   if isfile(fname_nc):
     if Debug: 
-      print "Found file: ", ncfile
+      print("Found file: ", ncfile)
     ds      = Dataset(fname_nc,'r',format="NETCDF3_CLASSIC") 
     t_raw   = ds.variables["time"]
     z       = ds.variables["alt1"][:]
@@ -77,7 +77,7 @@ def lidar2js(path, ncfile, jsfile):
     ds.close()
   else:
     if Debug: 
-      print "Not found file: ", ncfile
+      print("Not found file: ", ncfile)
     return "No Data"
 
   DX       = t[1]-t[0]
@@ -256,7 +256,7 @@ def upload_file(ftp_connetion, fname, binary_store=True):
   try:
     upload_file = open(fname, 'r')
     #transfer the file
-    print('Uploading ' + fname + '...')
+    print(('Uploading ' + fname + '...'))
     if binary_store:
       ftp_connetion.storbinary('STOR '+ fname, upload_file)
     else:

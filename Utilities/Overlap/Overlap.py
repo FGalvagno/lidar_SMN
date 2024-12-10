@@ -34,7 +34,7 @@ class SelectPoint:
         'on button press we will see if the mouse is over us and store some data'
         self.zlim.append(event.ydata)
         self.points = self.points + 1
-        print "Selected point #{}: x={} and y={}".format(self.points, event.xdata, event.ydata)
+        print("Selected point #{}: x={} and y={}".format(self.points, event.xdata, event.ydata))
         if self.points == 2: 
           self.disconnect()
           self.zlim.sort()
@@ -43,7 +43,7 @@ class SelectPoint:
           for it in range(self.NX): self.data[:,it] = self.data[:,it] * self.yr
           self.axarr[1].semilogx(self.data,self.z,'-')
           self.fig.canvas.draw()
-          print "Done!"
+          print("Done!")
 
     def disconnect(self):
         'disconnect all the stored connection ids'
@@ -63,7 +63,7 @@ class SelectPoint:
             #self.yr[:nmin] = self.yr[:nmin] + np.exp(pol(self.z[:nmin])) / self.data[:nmin,it]
             self.yr[:nmin] = self.yr[:nmin] + pol(self.z[:nmin]) / self.data[:nmin,it]
         self.yr[:nmin] = self.yr[:nmin] / nt
-        np.savetxt(self.yrfile, zip(self.z, self.yr), fmt='%0.8f', header='altitude (km) | overlap factor')    
+        np.savetxt(self.yrfile, list(zip(self.z, self.yr)), fmt='%0.8f', header='altitude (km) | overlap factor')    
 
     def overlap_mean(self):
         nmin  = np.argmin(np.abs(self.z-self.zlim[0]))
@@ -84,9 +84,9 @@ class SelectPoint:
             self.yr[iz-1] = 1.0
 #          elif yr_diff<0:
 #            self.yr[iz-1]=self.yr[iz]
-        print "We set yr=1 below of {} m".format(1000*hmin)
-        print "Saving data..."
-        np.savetxt(self.yrfile, zip(self.z, self.yr), fmt='%0.8f', header='altitude (km) | overlap factor')
+        print("We set yr=1 below of {} m".format(1000*hmin))
+        print("Saving data...")
+        np.savetxt(self.yrfile, list(zip(self.z, self.yr)), fmt='%0.8f', header='altitude (km) | overlap factor')
 
 #        ff, aa = plt.subplots()
 #        aa.plot(self.yr[:nmin], self.z[:nmin],'o-')

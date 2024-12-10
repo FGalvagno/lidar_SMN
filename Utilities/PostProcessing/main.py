@@ -3,7 +3,7 @@
 import numpy as np
 from netCDF4 import Dataset, num2date
 from datetime import datetime, timedelta
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 import Plots
 
 ################# Parameters ###############################################
@@ -22,7 +22,7 @@ ncfile_out = config.get("Paths", "ncfile_out")
 path       = ncpath_out + block + '/'
 ncfile_out = "09_2017.nc"
 
-if Debug: print "Opening file: ", path+ncfile_out
+if Debug: print("Opening file: ", path+ncfile_out)
 ### Read Time, Data (mV), Heigth (km)
 ds       = Dataset(path+ncfile_out)
 bsc532   = ds.variables["bsc532"][:]
