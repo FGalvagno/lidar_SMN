@@ -12,7 +12,7 @@ class GlobalParameters(object):
   def __init__(self,line1,line2,line3):
     self.Name            = line1.strip()
 
-    s=parse("{} {:tg} {:tg} {:g} {:f} {:f} {:g}",line2.strip())
+    s=parse("{} {:tg} {:tg} {:g} {:f} {:f} {:g}",line2)
     self.Station         = s[0]
     self.Start           = s[1]
     self.End             = s[2]
@@ -21,7 +21,7 @@ class GlobalParameters(object):
     self.Latitude        = s[5]
     self.ZenithAngle     = s[6]
 
-    s=parse("{:d} {:d} {:d} {:d} {:d}",line3.strip())
+    s=parse("{:d} {:d} {:d} {:d} {:d}",line3)
     self.Laser1Shots     = s[0]
     self.Laser1Frequency = s[1]
     self.Laser2Shots     = s[2]
@@ -30,7 +30,7 @@ class GlobalParameters(object):
 
 class Channel(object):
   def __init__(self,line):
-    s=parse("{:d} {:d} {:d} {:d} {:d} {:g} {:f} {:d}.{:w} 0 0 00 000 {:d} {:d} {:g} {:w}{:d}",line.strip())
+    s=parse("{:d} {:d} {:d} {:d} {:d} {:g} {:f} {:d}.{:w} 0 0 00 000 {:d} {:d} {:g} {:w}{:d}",line.strip().decode("ascii"))
     self.isActive         = s[0]==1
     if s[1]==1:
       self.isPhotonCounting = 'p'
@@ -115,14 +115,14 @@ class LoadLicel(object):
     self.channel = {}
     try:
       with open(fname, mode='rb') as file:
-      	l1 = file.readline()
-      	l2 = file.readline()
-      	l3 = file.readline()
+        l1 = file.readline().strip().decode("ascii")
+        l2 = file.readline().strip().decode("ascii")
+        l3 = file.readline().strip().decode("ascii")
         self.GlobalP = GlobalParameters(l1,l2,l3)
         channels = []
         for i in range(self.GlobalP.NumChannels):
-	        new_channel = Channel(file.readline())
-	        channels.append(new_channel)
+          new_channel = Channel(file.readline())
+          channels.append(new_channel)
         #Reading binary data...
         offset = 0
         for item in channels:
