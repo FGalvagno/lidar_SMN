@@ -63,8 +63,7 @@ print("Output file (NetCDF format): {}".format(prefix+ncfile_raw))
 t1_data, t2_data = ReadRaw.findtimes(t1,t2,sampling,binpath,prefix,ncpath_raw+prefix+ncfile_raw,FileSize)
 print("Time range found: {}-{}".format(t1_data, t2_data))
 if t2_data>t1_data:
-  x, y1, y2, y3, z, height = ReadRaw.get_data(t1_data,t2_data,sampling,binpath,prefix,FileSize)
-  
+  x, y1, y2, y3, z, height = ReadRaw.get_data(t1_data,t2_data,sampling,binpath,prefix,FileSize)  
   if isfile(ncpath_raw+prefix+ncfile_raw):
     print("Updating file: ", prefix+ncfile_raw)
     ReadRaw.updatencd(x, y1, y2, y3, z, ncpath_raw+prefix+ncfile_raw)
