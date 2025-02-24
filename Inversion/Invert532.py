@@ -136,8 +136,8 @@ def invert(station_block, cfgfile):
 
   if PlotRaw:
     print("Plotting raw data...")
-    Plots.show_raw(x,intvis,z, ncpath_out+"raw_vis.png", zmax=16)
-    Plots.show_raw(x,intir, z, ncpath_out+"raw_ir.png", zmax=16)
+    Plots.show_raw(x,intvis,z, ncpath_out+"raw_vis.png")
+    Plots.show_raw(x,intir, z, ncpath_out+"raw_ir.png")
 
   ### Overlap Correction
   if Debug: print("Performing overlap corrections...")
