@@ -88,7 +88,7 @@ def resampling(x, data, z, maxalt, maxdays):
   
   if wz>1:
     if Debug: print("Using vertical rebin with wz={}".format(wz))
-    NZ = NZ/wz
+    NZ = NZ//wz
     data_wz = np.full((NZ,NX),np.nan)
     for it in range(NX):
       if not np.all(np.isnan(data[:,it])):
@@ -98,7 +98,7 @@ def resampling(x, data, z, maxalt, maxdays):
 
   if wx>1:
     if Debug: print("Using horizontal rebin with wx={}".format(wx))
-    NX = NX/wx
+    NX = NX//wx
     data_wzwx = np.full((NZ,NX),np.nan)
     with warnings.catch_warnings():
       # I expect to see RuntimeWarnings in this block
