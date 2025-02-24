@@ -12,7 +12,7 @@ from Utilities import CheckFolder
 ################# Parameters ############################################### 
 cfgfile       = "parameters_SMN.cfg"                                           # CFG file
 t2            = datetime.utcnow().replace(second=0, microsecond=0)         # Final date and time
-t1            = (t2-timedelta(days=180)).replace(hour=0, minute=0)          # Start date and time 
+t1            = (t2-timedelta(days=7)).replace(hour=0, minute=0)          # Start date and time 
 Debug         = True
 ############################################################################
 
@@ -30,7 +30,7 @@ station_list  = ['aeroparque',
                  'vmartelli']
 
 if Debug:
-  station_block = 'cordoba'
+  station_block = 'aeroparque'
 else:
   station_block = sys.argv[1]
 
