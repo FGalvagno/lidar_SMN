@@ -121,7 +121,10 @@ def get_data(t1,t2,sampling,path,prefix,FileSize):
               y3     = np.zeros((NT,NZ))
             y1[i_time,:] += x.channel["532oo"].Signal
             y2[i_time,:] += x.channel["532po"].Signal
-            y3[i_time,:] += x.channel["1064oo"].Signal
+            try:
+              y3[i_time,:] += x.channel["1064oo"].Signal
+            except:
+              pass
     td += timedelta(days=1)
   for it in range(NT):
     if n_data[it]==0:
