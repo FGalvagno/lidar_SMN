@@ -23,6 +23,7 @@ Clonar el repo y navegar a la carpeta del mismo
 ```bash
 git clone https://github.com/FGalvagno/lidar_SMN
 cd lidar_SMN
+git switch python3
 ```
 Instalar las dependencias sugeridas
 
