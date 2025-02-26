@@ -70,7 +70,7 @@ def invert(station_block, cfgfile):
     ds       = Dataset(ncpath_raw+station+ncfile_raw)
     ch1      = ds.variables["ch1"][:]
     ch2      = ds.variables["ch2"][:]
-    ch3      = ds.variables["ch3"][:]
+    ch3      = ds.variables["ch3"][:] #TEMP SOLUTION FOR AEROPARQUE 1064NM CHANNEL
     z        = ds.variables["alt"][:]
     times    = ds.variables["time"]
     day_0    = datetime(year=ds.YEAR, month=ds.MONTH, day=ds.DAY)
@@ -219,6 +219,8 @@ def invert(station_block, cfgfile):
     ### the whole profiles depend on this boundary condition
     iz_inv = int(round(invtop[ix] * DZinv))-1
     profile_vis[iz_inv-1] = np.nanmean(profile_vis[iz_inv-2:iz_inv+1])
+
+    
     ### We assume that the molecular contribution 
     ### is dominant at the inversion height
     if zb[ix]<3.0: continue
