@@ -16,7 +16,7 @@ Debug        = True
 def read_firstline(fname):
   with open(fname,'rb') as f:
     output = f.readline()
-    print(output.strip().decode("ascii"))
+    #print(output.strip().decode("ascii"))
   return output.strip().decode("ascii")
 
 def valid_files(prefix,tdate,bpath,FileSize):
